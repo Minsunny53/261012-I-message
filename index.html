@@ -120,7 +120,8 @@
         .rp-emoji { font-size: clamp(2.2rem, 5.5vw, 3.8rem); line-height: 1; }
         .rp-title { margin: 0; font-size: clamp(1.35rem, 3.1vw, 2.6rem); font-weight: 800; line-height: 1.28; word-break: keep-all; letter-spacing: -0.03em; }
         .rp-who { font-size: clamp(1rem, 1.7vw, 1.35rem); font-weight: 600; color: var(--muted); }
-        .rp-redo { position: absolute; top: 8px; right: 10px; border: none; background: var(--ghost); color: var(--text); font-size: .8rem; font-weight: 700; padding: 4px 10px; border-radius: 8px; cursor: pointer; }
+        .rp-acts { position: absolute; top: 8px; right: 10px; display: flex; gap: 6px; }
+        .rp-redo { position: static; border: none; background: var(--ghost); color: var(--text); font-size: .8rem; font-weight: 700; padding: 4px 10px; border-radius: 8px; cursor: pointer; }
         .rp-redo:hover { background: var(--accent-soft); color: var(--accent-d); }
         .rp-card.big .rp-title { font-size: clamp(2rem, 5.2vw, 4.2rem); }
         .rp-card.big .rp-emoji { font-size: clamp(4rem, 11vw, 8rem); }
@@ -287,6 +288,11 @@
         .hbar i { display: block; height: 100%; background: var(--accent); border-radius: 6px; }
         .dash-title { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
         .tut-list li i { width: auto; min-width: 1.55em; height: 1.55em; padding: 0 .5em; border-radius: 999px; white-space: nowrap; }
+        .priv-list { margin: 0 0 8px; padding-left: 1.1em; line-height: 1.6; font-size: .97rem; }
+        .priv-list li { margin-bottom: 4px; }
+        .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+        .tip-box { background: var(--surface2); border-radius: 12px; padding: 9px 12px; font-size: .92rem; line-height: 1.45; }
+        .tip-box b { display: block; margin-bottom: 2px; }
         .toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: #191f28; color: #fff; padding: 9px 18px; border-radius: 999px; font-size: .92rem; font-weight: 500; z-index: 300; opacity: 0; pointer-events: none; transition: opacity .25s; }
         .toast.show { opacity: .96; }
     </style>
@@ -355,7 +361,7 @@
                 <div class="fb warn" id="en-msg" style="display:none;margin:0"></div>
                 <div id="en-nourl" class="fb warn" style="display:none;margin:0">서버 주소가 아직 없어요. 선생님이 받은 링크(주소 끝에 <code>?s=…</code>)로 다시 열거나 아래에 주소를 넣어 주세요.
                     <div class="row" style="margin-top:6px;flex-wrap:nowrap"><input id="en-url" class="inp" placeholder="https://script.google.com/macros/s/.../exec"><button class="btn small" id="en-url-save">저장</button></div></div>
-                <div class="entry-links"><button class="chip" id="en-guest">코드 없이 둘러보기</button><button class="chip" id="en-admin">관리자</button></div>
+                <div class="entry-links"><button class="chip" id="en-priv">개인정보 안내</button><button class="chip" id="en-guest">코드 없이 둘러보기</button><button class="chip" id="en-admin">관리자</button></div>
             </div>
         </div>
     </section>
@@ -371,6 +377,15 @@
             </div>
             <div class="menu-grid" id="hm-menu"></div>
             <div class="panel" id="hm-dash"></div>
+            <div class="panel">
+                <h3 style="margin:0 0 6px">웨일 스페이스와 함께 쓰기</h3>
+                <div class="tips-grid">
+                    <div class="tip-box"><b>웨일 클래스 과제·공지에 링크 붙이기</b>선생님이 [내 학급]에서 <u>학생 접속 링크</u>를 복사해 올리면, 학생은 번호만 넣고 바로 입장해요.</div>
+                    <div class="tip-box"><b>웨일온 수업에서 화면 공유</b>모둠 역할놀이의 <u>전체 연습</u>을 고르면 상황 하나가 큰 카드로 나와 함께 읽기 좋아요.</div>
+                    <div class="tip-box"><b>팀보드로 모으기</b>카드·연습·제출 기록의 <u>팀보드용 복사</u> 버튼으로 내용을 복사해 팀보드 카드에 붙여넣어 공유해요.</div>
+                </div>
+                <div class="row" style="margin-top:8px"><button class="btn ghost small" id="hm-priv">개인정보·데이터 안내 보기</button><span class="muted">웨일 브라우저(Chromium 기반)에서 그대로 열려요.</span></div>
+            </div>
         </div>
     </section>
 
@@ -465,6 +480,7 @@
                     <button class="btn" id="pr-ai-btn">AI 선생님 피드백</button>
                     <button class="btn ghost" id="pr-model">예시 보기</button>
                     <button class="btn ghost" id="pr-print-one">이 상황 활동지</button>
+                    <button class="btn ghost" id="pr-copy">팀보드용 복사</button>
                     <button class="btn ghost" id="pr-submit">선생님께 제출</button>
                     <button class="btn ghost" id="pr-reset">다시 하기</button>
                 </div>
@@ -704,6 +720,7 @@
                     <div class="row">
                         <button class="btn" id="sb-load">불러오기</button>
                         <input id="sb-filter" class="inp" style="width:120px" inputmode="numeric" placeholder="번호 검색">
+                        <button class="btn ghost" id="sb-copy">팀보드용 복사</button>
                         <button class="btn ghost" id="sb-csv">CSV 저장</button>
                         <button class="btn ghost danger" id="sb-purge" style="color:#fff">우리 반 기록 모두 삭제</button>
                         <span class="muted" id="sb-msg"></span>
@@ -829,6 +846,19 @@ service cloud.firestore {
             <div class="tut-dots" id="tut-dots"></div>
             <button class="btn" id="tut-next">다음</button>
         </div>
+    </div>
+</div>
+<div id="priv" style="display:none;position:fixed;inset:0;z-index:260;background:rgba(15,23,42,.62);align-items:center;justify-content:center;padding:12px">
+    <div class="panel" style="max-width:520px;width:100%;max-height:92vh;overflow:auto">
+        <h3>개인정보·데이터 안내</h3>
+        <ul class="priv-list">
+            <li><b>이름은 쓰지 않아요.</b> 친구 이름도, 내 이름도, 전화번호·주소·이메일도 쓰지 않아요. 그런 내용이 보이면 앱이 막아요.</li>
+            <li><b>저장되는 것:</b> [선생님께 제출]을 누른 때만, 학급 코드와 <b>번호</b>, 내가 쓴 연습 내용이 선생님 학급 기록에 저장돼요. 이름과 구글 계정은 저장하지 않아요.</li>
+            <li><b>저장되지 않는 것:</b> AI 선생님과 나눈 대화는 기록으로 남기지 않아요.</li>
+            <li><b>AI 선생님:</b> 질문할 때 쓴 글은 AI(Google Gemini) 서비스로 보내져 답을 만들어요. 개인정보처럼 보이는 글은 보내지 않아요.</li>
+            <li><b>누가 볼 수 있나요:</b> 우리 반 선생님(비밀번호로 잠긴 기록)과 서버 관리자만 볼 수 있어요. 기록은 선생님이 언제든 지울 수 있고, 오래된 기록은 자동으로 지워져요.</li>
+        </ul>
+        <div class="row"><button class="btn" id="priv-ok">확인했어요</button></div>
     </div>
 </div>
 <div id="conn-overlay" style="display:none;position:fixed;inset:0;z-index:210;background:rgba(15,23,42,.6);align-items:center;justify-content:center;padding:14px">
@@ -1103,6 +1133,8 @@ async function proxyPost(payload) {
     return j;
 }
 async function callGemini({ system, history, json = false }) {
+    const lastTurn = history[history.length - 1];
+    if (lastTurn && lastTurn.role !== 'ai' && PII_RE.test(String(lastTurn.text || ''))) throw new Error('PII');
     const key = getApiKey();
     const body = {
         systemInstruction: { parts: [{ text: system }] },
@@ -1136,6 +1168,7 @@ function friendlyError(e) {
     if (m === 'NO_KEY') return 'AI 연결이 아직 안 되어 있어요. 관리자 페이지에서 API 키를 넣어 주세요.';
     if (m === 'NO_CODE') return '위쪽 버튼을 눌러 학급 코드와 내 번호를 먼저 넣어 주세요.';
     if (m === 'BAD_CODE') return '학급 코드가 맞지 않아요. 선생님께 다시 물어봐요.';
+    if (m === 'PII') return '전화번호·이메일·주소처럼 보이는 내용이 있어요. 그런 건 지우고 다시 써 볼까요? (이름도 쓰지 않아요)';
     if (m === 'RATE') return '너무 빨리 눌렀어요. 조금 있다가 다시 해 봐요.';
     if (m === 'CLASS_QUOTA') return '오늘 우리 반이 AI를 많이 썼어요. 조금 뒤에 다시 해 봐요.';
     if (m === 'TOO_LONG') return '글이 너무 길어요. 조금 줄여서 써 볼까요?';
@@ -1222,7 +1255,7 @@ function rpCardHtml(i) {
         <div class="card-container" onclick="this.classList.toggle('flipped')">
             <div class="card-face rp-front">
                 <span class="rp-badge">${rp.allSame ? '전체 함께' : (i + 1) + '모둠'}</span>
-                <button class="rp-redo" data-redo="${i}" title="이 카드만 다시 뽑기">다시 뽑기</button>
+                <div class="rp-acts"><button class="rp-redo" data-copy-card="${i}" title="팀보드·웨일 클래스에 붙여넣기용 텍스트 복사">팀보드 복사</button><button class="rp-redo" data-redo="${i}" title="이 카드만 다시 뽑기">다시 뽑기</button></div>
                 <div class="rp-emoji">${sit.emoji}</div>
                 <h3 class="rp-title">${formattedTitle}</h3>
                 <div class="rp-who">${esc(A.emoji)} ${esc(A.name)} ↔ ${esc(B.emoji)} ${esc(B.name)}</div>
@@ -1250,7 +1283,13 @@ function renderCards() {
     for (let i = 0; i < count; i++) { const pr = randPair(used); used.push(pr.k); rp.pairs.push(pr); }
     rp.picks.forEach((_, i) => { const el = document.createElement('div'); el.className = 'rp-card' + (allSame ? ' big' : ''); el.innerHTML = rpCardHtml(i); gridContainer.appendChild(el); });
 }
+function cardText(i) {
+    const s = rp.picks[i], { a: A, b: B } = rp.pairs[i];
+    return `[나 전달법] ${sitTitle(s, A, B)}\n\n▶ ${A.name}의 말하기 (행·감·바)\n행동·상황: ${s.my_action},\n감정: 나는 ${s.my_emotion}\n바람: ${s.my_want}\n\n▶ ${B.name}의 대답 (인·사·약)\n인정: ${s.friend_ack}\n사과: ${s.friend_apology}\n약속: ${s.friend_promise}`;
+}
+async function copyText(text, okMsg) { try { await navigator.clipboard.writeText(text); toast(okMsg || '복사했어요. 팀보드나 웨일 클래스에 붙여넣어 보세요'); } catch (e) { prompt('아래 내용을 복사하세요', text); } }
 gridContainer.addEventListener('click', e => {
+    const cp = e.target.closest('[data-copy-card]'); if (cp) { e.stopPropagation(); copyText(cardText(+cp.dataset.copyCard)); return; }
     const bt = e.target.closest('[data-redo]'); if (!bt) return;
     e.stopPropagation();
     const i = +bt.dataset.redo;
@@ -1560,6 +1599,8 @@ prSel.onchange = () => renderPracticeCard();
 $('#pr-custom').addEventListener('input', () => renderPracticeCard(false));
 $('#pr-random').onclick = () => { const l = allSits(); prSel.value = l[Math.floor(Math.random() * l.length)].id; renderPracticeCard(); };
 $('#pr-check').onclick = checkPractice;
+$('#pr-copy').onclick = () => { const c = curChars(), s = curSit(), v = k => prVal(k) || '(아직 안 씀)';
+    copyText(`[나 전달법 연습] ${sitTitle(s)}\n\n▶ ${c.a.name}의 말하기\n행동·상황: ${v('a')}\n감정: ${v('e')}\n바람: ${v('w')}\n\n▶ ${c.b.name}의 대답\n인정: ${v('ack')}\n사과: ${v('sorry')}\n약속: ${v('prom')}`); };
 $('#pr-check').addEventListener('click', () => { const v = {}; PR_KEYS.forEach(k => v[k] = prVal(k)); if (!PR_KEYS.some(k => v[k])) return; const res = evalFeedback(activeFb(), v); statsAdd(PR_KEYS.filter(k => res[k].ok).length, false); });
 $('#pr-ai-btn').onclick = aiFeedback;
 $('#pr-model').onclick = showModel;
@@ -2131,6 +2172,11 @@ $('#sb-load').onclick = async () => {
     } catch (e) { msg.textContent = sbErr(e); }
 };
 $('#sb-filter').addEventListener('input', renderSb);
+$('#sb-copy').onclick = () => {
+    if (!sbRows.length) { toast('먼저 불러오기를 눌러 주세요'); return; }
+    const f = $('#sb-filter').value.trim(), rows = (f ? sbRows.filter(r => String(r['번호']) === f) : sbRows).slice(0, 30);
+    copyText(rows.map(r => `[${r['번호']}번] ${r['상황']}\n행동·상황: ${r['행동·상황']} / 감정: ${r['감정']} / 바람: ${r['바람']}\n인정: ${r['인정']} / 사과: ${r['사과']} / 약속: ${r['약속']}`).join('\n\n'));
+};
 $('#sb-csv').onclick = () => {
     if (!sbRows.length) { toast('먼저 불러오기를 눌러 주세요'); return; }
     const cell = v => { let t = String(v ?? ''); if (/^[=+\-@]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
@@ -2185,7 +2231,11 @@ $('#mc-create').onclick = async () => {
     }
 };
 $('#mc-login').onclick = async () => { if (await tcLogin($('#mc-code').value, $('#mc-pw3').value, $('#mc-login-msg'))) $('#mc-pw3').value = ''; };
-function studentLink() { const u = proxyUrl(); return location.origin === 'null' || location.protocol === 'file:' ? location.href.split(/[?#]/)[0] + (u ? '?s=' + u : '') : location.origin + location.pathname + (u ? '?s=' + u : ''); }
+function studentLink() {
+    const base = location.protocol === 'file:' || location.origin === 'null' ? location.href.split(/[?#]/)[0] : location.origin + location.pathname;
+    const q = []; if (proxyUrl()) q.push('s=' + proxyUrl()); if (myCode()) q.push('c=' + myCode());
+    return base + (q.length ? '?' + q.join('&') : '');
+}
 $('#mc-link').onclick = async () => { const l = studentLink(); try { await navigator.clipboard.writeText(l); toast('학생 접속 링크를 복사했어요'); } catch (e) { prompt('아래 링크를 복사하세요', l); } };
 $('#mc-logout').onclick = () => { ['iMsg.myCode', 'iMsg.myPw', 'iMsg.myLabel'].forEach(k => store.del(k)); renderMyClass(); };
 $('#mc-copy').onclick = async () => { try { await navigator.clipboard.writeText(myCode()); toast('학급 코드를 복사했어요'); } catch (e) { toast('코드: ' + myCode()); } };
@@ -2320,6 +2370,7 @@ document.addEventListener('keydown', e => { if (!$('#tut').classList.contains('o
    14. 입장(학생/선생님) · 홈 화면
    ===================================================================== */
 (function () {   // 링크로 서버 주소 받기: 앱주소?s=https://script.google.com/macros/s/…/exec
+    try { const c = new URLSearchParams(location.search).get('c'); if (c && /^\d{8}$/.test(c)) window.__pendCode = c; } catch (e) {}
     try { const s = new URLSearchParams(location.search).get('s'); if (s && /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(s)) store.set('iMsg.proxyLocal', s); } catch (e) {}
 })();
 const role = () => store.get('iMsg.role', '') || '';
@@ -2330,6 +2381,17 @@ function enterApp(r) {
     if (!store.get('iMsg.tutDone', '')) tutOpen(0);
 }
 function enMsg(m) { const el = $('#en-msg'); el.textContent = m || ''; el.style.display = m ? 'block' : 'none'; }
+function enPrefill() {
+    if (!window.__pendCode) return;
+    $('#en-code').value = fmtCode(window.__pendCode);
+    $('#en-msg') && enMsg('학급 코드가 링크로 입력됐어요. 내 번호만 넣고 입장하세요.');
+    setTimeout(() => { const n = $('#en-no'); if (n) n.focus(); }, 50);
+}
+function askPriv(next) {
+    if (store.get('iMsg.privOk', '')) { next(); return; }
+    $('#priv').style.display = 'flex'; $('#priv-ok').onclick = () => { store.set('iMsg.privOk', '1'); $('#priv').style.display = 'none'; next(); };
+}
+function showPriv() { $('#priv').style.display = 'flex'; $('#priv-ok').onclick = () => { $('#priv').style.display = 'none'; }; }
 function enRefresh() { $('#en-nourl').style.display = proxyUrl() ? 'none' : 'block'; }
 $$('#en-seg button').forEach(b => b.onclick = () => { $$('#en-seg button').forEach(x => x.classList.toggle('on', x === b)); $('#en-student').style.display = b.dataset.r === 'student' ? 'flex' : 'none'; $('#en-teacher').style.display = b.dataset.r === 'teacher' ? 'flex' : 'none'; enMsg(''); });
 $$('#en-tseg button').forEach(b => b.onclick = () => { $$('#en-tseg button').forEach(x => x.classList.toggle('on', x === b)); $('#en-t-login').style.display = b.dataset.t === 'login' ? 'flex' : 'none'; $('#en-t-create').style.display = b.dataset.t === 'create' ? 'flex' : 'none'; enMsg(''); });
@@ -2342,7 +2404,7 @@ $('#en-student-go').onclick = async () => {
     try {
         const j = await proxyPost({ action: 'checkClass', code });
         if (!j.ok) throw new Error(j.error === 'BAD_CODE' || j.error === 'NO_CLASS' ? 'NO_CLASS' : (j.error || 'SERVER'));
-        store.set('iMsg.classCode', code); store.set('iMsg.studentNo', no); enMsg(''); enterApp('student');
+        store.set('iMsg.classCode', code); store.set('iMsg.studentNo', no); enMsg(''); askPriv(() => enterApp('student'));
     } catch (e) { enMsg(srvErr(e) + (/NETWORK|NO_PROXY/.test(e.message) ? ' (아래 [코드 없이 둘러보기]로 연습은 할 수 있어요)' : '')); }
 };
 $('#en-login-go').onclick = async () => { const ok = await tcLogin($('#en-tcode').value, $('#en-tpw').value, { set textContent(v) { enMsg(v); } }); if (ok) { $('#en-tpw').value = ''; enterApp('teacher'); } };
@@ -2350,7 +2412,9 @@ $('#en-create-go').onclick = async () => {
     const ok = await tcCreate($('#en-label').value.trim(), $('#en-pw').value, $('#en-pw2').value, $('#en-invite').value.trim(), { set textContent(v) { enMsg(v); } });
     if (ok) { ['en-pw', 'en-pw2'].forEach(i => $('#' + i).value = ''); toast('학급이 만들어졌어요! 홈에서 코드를 확인하세요.'); enterApp('teacher'); }
 };
-$('#en-guest').onclick = () => enterApp('guest');
+$('#en-guest').onclick = () => askPriv(() => enterApp('guest'));
+$('#en-priv').onclick = showPriv;
+$('#hm-priv').onclick = showPriv;
 $('#en-admin').onclick = () => { store.set('iMsg.role', 'teacher'); applyRole(); showPage('admin'); };
 $('#exit-btn').onclick = () => { store.del('iMsg.role'); applyRole(); showPage('entry'); };
 $('#app-title').onclick = () => showPage(role() ? 'home' : 'entry');
@@ -2394,7 +2458,7 @@ async function renderTeacherDash() {
     if (!myCode() || !myPw()) {
         box.innerHTML = `<h3 style="margin:0 0 4px">우리 반 현황</h3><p class="muted" style="margin:0 0 8px">학급 코드로 들어오면 학생 제출 현황이 그래프로 보여요. 지금은 학급 없이 둘러보는 중이에요.</p><button class="btn" data-go="myclass">내 학급 열기</button>`; return;
     }
-    box.innerHTML = `<div class="dash-title"><h3 style="margin:0">우리 반 현황 <span class="muted" style="font-weight:500">· 학급 코드 ${fmtCode(myCode())}</span></h3><div class="row"><button class="btn ghost small" id="hm-copy">코드 복사</button><button class="btn ghost small" id="hm-refresh">새로고침</button></div></div><div class="muted" id="hm-load">불러오는 중…</div>`;
+    box.innerHTML = `<div class="dash-title"><h3 style="margin:0">우리 반 현황 <span class="muted" style="font-weight:500">· 학급 코드 ${fmtCode(myCode())}</span></h3><div class="row"><button class="btn ghost small" id="hm-copy">코드 복사</button><button class="btn ghost small" id="hm-link">학생 링크 복사</button><button class="btn ghost small" id="hm-refresh">새로고침</button></div></div><div class="muted" id="hm-load">불러오는 중…</div>`;
     try {
         const j = await proxyPost({ action: 'read', code: myCode(), password: myPw() });
         if (!j.ok) throw new Error(j.error || 'SERVER');
@@ -2418,6 +2482,7 @@ function drawTeacherDash(total) {
 }
 document.addEventListener('click', e => {
     if (e.target.closest('#hm-refresh')) renderTeacherDash();
+    if (e.target.closest('#hm-link')) copyText(studentLink(), '학생 접속 링크를 복사했어요. 웨일 클래스 과제·공지에 붙여 보세요');
     if (e.target.closest('#hm-copy')) { navigator.clipboard && navigator.clipboard.writeText(myCode()).then(() => toast('학급 코드를 복사했어요'), () => toast('코드: ' + myCode())); }
     const g = e.target.closest('#hm-dash [data-go]'); if (g) showPage(g.dataset.go);
 });
@@ -2433,7 +2498,7 @@ fillSitSelects();
 renderPracticeCard();
 setAgentRole('student');
 renderCards();
-applyRole(); enRefresh();
+applyRole(); enRefresh(); enPrefill();
 const initial = (location.hash || '').replace('#', '');
 if (role()) showPage(['home', 'roleplay', 'practice', 'help', 'agent', 'myclass', 'feedback', 'admin'].includes(initial) ? initial : 'home');
 else showPage('entry');
