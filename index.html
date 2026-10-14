@@ -120,6 +120,15 @@
         .rp-emoji { font-size: clamp(2.2rem, 5.5vw, 3.8rem); line-height: 1; }
         .rp-title { margin: 0; font-size: clamp(1.35rem, 3.1vw, 2.6rem); font-weight: 800; line-height: 1.28; word-break: keep-all; letter-spacing: -0.03em; }
         .rp-who { font-size: clamp(1rem, 1.7vw, 1.35rem); font-weight: 600; color: var(--muted); }
+        .rp-redo { position: absolute; top: 8px; right: 10px; border: none; background: var(--ghost); color: var(--text); font-size: .8rem; font-weight: 700; padding: 4px 10px; border-radius: 8px; cursor: pointer; }
+        .rp-redo:hover { background: var(--accent-soft); color: var(--accent-d); }
+        .rp-card.big .rp-title { font-size: clamp(2rem, 5.2vw, 4.2rem); }
+        .rp-card.big .rp-emoji { font-size: clamp(4rem, 11vw, 8rem); }
+        .rp-card.big .rp-who { font-size: clamp(1.3rem, 2.8vw, 2.3rem); }
+        .rp-card.big .rp-top { font-size: clamp(1.2rem, 2.4vw, 2rem); }
+        .rp-card.big .rp-col h4 { font-size: clamp(1.1rem, 2vw, 1.7rem); }
+        .rp-card.big .rp-item p { font-size: clamp(1.05rem, 2vw, 1.7rem); }
+        .rp-card.big .rp-item small { font-size: .95rem; }
         .rp-hint { font-size: .8rem; color: var(--muted); }
         .rp-back { border: 1px solid var(--border); }
         .rp-top { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 7px 12px; background: var(--ghost); font-weight: 700; font-size: clamp(.95rem, 1.5vw, 1.2rem); line-height: 1.3; word-break: keep-all; }
@@ -215,6 +224,69 @@
         details.acc { border-radius: 12px; padding: 7px 12px; background: var(--surface2); }
         details.acc > summary { cursor: pointer; font-size: .98rem; font-weight: 600; }
         pre.code { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 10px; overflow: auto; font-size: .8rem; white-space: pre-wrap; }
+        /* ===== 사용법(튜토리얼) ===== */
+        #tut { display: none; position: fixed; inset: 0; z-index: 250; background: rgba(15,23,42,.62); align-items: center; justify-content: center; padding: 12px; }
+        #tut.open { display: flex; }
+        .tut-card { background: var(--surface); border-radius: 22px; width: 100%; max-width: 520px; max-height: 92vh; display: flex; flex-direction: column; box-shadow: 0 12px 40px rgba(0,0,0,.35); overflow: hidden; }
+        .tut-top { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px 0; }
+        .tut-step { font-size: .85rem; font-weight: 700; color: var(--accent-d); }
+        .tut-skip { border: none; background: none; color: var(--muted); font-size: .9rem; cursor: pointer; padding: 4px 6px; }
+        .tut-body { padding: 8px 18px 6px; overflow: auto; }
+        .tut-body h2 { margin: 4px 0 8px; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
+        .tut-body p { margin: 0 0 8px; font-size: 1.02rem; line-height: 1.55; }
+        .tut-list { margin: 0 0 8px; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+        .tut-list li { display: flex; gap: 9px; align-items: flex-start; font-size: 1rem; line-height: 1.45; }
+        .tut-list li i { flex: none; width: 1.55em; height: 1.55em; border-radius: 50%; background: var(--accent-soft); color: var(--accent-d); font-style: normal; font-weight: 800; font-size: .85rem; display: inline-flex; align-items: center; justify-content: center; margin-top: .05em; }
+        .tut-two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+        .tut-box { border-radius: 14px; padding: 9px 11px; font-size: .95rem; line-height: 1.45; }
+        .tut-box b { display: block; font-size: 1.05rem; margin-bottom: 2px; }
+        .tut-box.g { background: var(--t-g); color: var(--c-g); }
+        .tut-box.i { background: var(--t-i); color: var(--c-i); }
+        .tut-box span { color: var(--text); }
+        .tut-ex { background: var(--surface2); border-radius: 12px; padding: 8px 12px; font-size: .97rem; line-height: 1.5; }
+        .tut-go { margin-top: 8px; }
+        .tut-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px 14px; }
+        .tut-dots { display: flex; gap: 5px; }
+        .tut-dots b { width: 7px; height: 7px; border-radius: 50%; background: var(--border); }
+        .tut-dots b.on { background: var(--accent); width: 18px; border-radius: 4px; }
+        @media (max-width: 420px) { .tut-two { grid-template-columns: 1fr; } }
+        /* ===== 입장 / 홈 ===== */
+        .app-title { cursor: pointer; }
+        body.entry-mode .tabs, body.entry-mode #help-btn, body.entry-mode #conn-btn, body.entry-mode #exit-btn { display: none; }
+        body:not([data-role="teacher"]) [data-teacher] { display: none !important; }
+        .entry { max-width: 460px; margin: 0 auto; padding: 22px 14px 30px; display: flex; flex-direction: column; gap: 14px; }
+        .entry-hero { text-align: center; }
+        .entry-logo { width: 54px; height: 54px; border-radius: 16px; background: var(--accent); margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.6rem; font-weight: 800; }
+        .entry-hero h1 { margin: 0 0 6px; font-size: 1.7rem; font-weight: 800; letter-spacing: -0.03em; }
+        .entry-hero p { margin: 0; color: var(--muted); font-size: 1rem; line-height: 1.5; word-break: keep-all; }
+        .entry-card { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+        .entry-card .seg { align-self: stretch; display: flex; }
+        .entry-card .seg button { flex: 1; padding: 8px 0; font-size: 1rem; }
+        .entry-links { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .hero-home h1 { margin: 2px 0 6px; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
+        .hero-home p { margin: 0 0 10px; line-height: 1.55; word-break: keep-all; }
+        .who-chip { display: inline-block; font-size: .82rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-d); }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+        .menu-card { background: var(--surface); border: none; border-radius: 16px; padding: 12px 14px; text-align: left; cursor: pointer; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 3px; color: var(--text); }
+        .menu-card:hover { outline: 2px solid var(--accent); }
+        .menu-card b { font-size: 1.08rem; letter-spacing: -0.02em; }
+        .menu-card span { color: var(--muted); font-size: .9rem; line-height: 1.4; word-break: keep-all; }
+        .menu-card .mc-no { font-size: .75rem; font-weight: 800; color: var(--accent-d); }
+        .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 8px; }
+        .tile { background: var(--surface2); border-radius: 14px; padding: 9px 12px; }
+        .tile small { display: block; color: var(--muted); font-size: .8rem; }
+        .tile b { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
+        .tile b em { font-style: normal; font-size: .9rem; color: var(--muted); font-weight: 600; margin-left: 2px; }
+        .bars { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding-top: 6px; }
+        .bars .col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 3px; font-size: .78rem; color: var(--muted); }
+        .bars .col i { display: block; width: 100%; max-width: 38px; background: var(--accent); border-radius: 6px 6px 2px 2px; min-height: 2px; }
+        .bars .col i.hi { background: var(--c-i); }
+        .bars .col span { font-weight: 700; color: var(--text); }
+        .hbar { display: grid; grid-template-columns: 46px 1fr 28px; gap: 6px; align-items: center; font-size: .85rem; margin: 3px 0; }
+        .hbar div { background: var(--ghost); border-radius: 6px; height: 12px; overflow: hidden; }
+        .hbar i { display: block; height: 100%; background: var(--accent); border-radius: 6px; }
+        .dash-title { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .tut-list li i { width: auto; min-width: 1.55em; height: 1.55em; padding: 0 .5em; border-radius: 999px; white-space: nowrap; }
         .toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: #191f28; color: #fff; padding: 9px 18px; border-radius: 999px; font-size: .92rem; font-weight: 500; z-index: 300; opacity: 0; pointer-events: none; transition: opacity .25s; }
         .toast.show { opacity: .96; }
     </style>
@@ -222,18 +294,22 @@
 <body>
 
 <header class="app-header">
-    <h1 class="app-title">나 전달법 놀이터</h1>
+    <h1 class="app-title" id="app-title" title="처음 화면으로">나 전달법 놀이터</h1>
     <nav class="tabs" id="tabs">
-        <button class="tab-btn active" data-page="roleplay">모둠 역할놀이</button>
+        <button class="tab-btn" data-page="home">홈</button>
+        <button class="tab-btn" data-page="roleplay">모둠 역할놀이</button>
         <button class="tab-btn" data-page="practice">나 전달법 연습</button>
         <button class="tab-btn" data-page="help">실제 상황을 도와줘</button>
         <button class="tab-btn" data-page="agent">AI 선생님</button>
-        <button class="tab-btn" data-page="feedback">피드백 지침</button>
-        <button class="tab-btn" data-page="admin">관리자</button>
+        <button class="tab-btn" data-page="myclass" data-teacher>내 학급</button>
+        <button class="tab-btn" data-page="feedback" data-teacher>피드백 지침</button>
+        <button class="tab-btn" data-page="admin" data-teacher>관리자</button>
     </nav>
     <div class="tools">
         <button class="tool-btn" id="fs-down" title="글씨 작게">가-</button>
         <button class="tool-btn" id="fs-up" title="글씨 크게">가+</button>
+        <button class="tool-btn" id="exit-btn" title="처음 화면(학생/선생님 선택)으로">처음으로</button>
+        <button class="tool-btn" id="help-btn" title="사용법 보기">사용법</button>
         <button class="tool-btn" id="conn-btn" title="우리 반 연결 (학급 코드·번호)"></button>
         <button class="tool-btn" id="theme-btn" title="화면 밝기 바꾸기"></button>
     </div>
@@ -241,14 +317,71 @@
 
 <main>
     <!-- ================= 1. 모둠 역할놀이 ================= -->
-    <section id="page-roleplay" class="page active">
+    <!-- ================= 입장 ================= -->
+    <section id="page-entry" class="page active">
+        <div class="entry">
+            <div class="entry-hero">
+                <div class="entry-logo">나</div>
+                <h1>나 전달법 놀이터</h1>
+                <p>국어 수업과 생활지도를 쉽고 체계적으로.<br>탓하지 않고 내 마음을 말하는 연습을 해요.</p>
+            </div>
+            <div class="panel entry-card">
+                <div class="seg" id="en-seg"><button data-r="student" class="on">학생</button><button data-r="teacher">선생님</button></div>
+
+                <div id="en-student" class="stack">
+                    <p class="muted" style="margin:0">선생님이 알려 준 <b>학급 코드</b>와 내 <b>번호</b>를 넣어요. 이름은 쓰지 않아요.</p>
+                    <div class="field"><label>학급 코드 (숫자 8자리)</label><input id="en-code" class="inp" inputmode="numeric" maxlength="9" autocomplete="off" placeholder="예) 1234 5678"></div>
+                    <div class="field"><label>내 번호</label><input id="en-no" class="inp" inputmode="numeric" maxlength="2" placeholder="예) 7"></div>
+                    <button class="btn" id="en-student-go">입장하기</button>
+                </div>
+
+                <div id="en-teacher" class="stack" style="display:none">
+                    <div class="seg" id="en-tseg" style="align-self:flex-start"><button data-t="login" class="on">내 학급 들어가기</button><button data-t="create">새 학급 만들기</button></div>
+                    <div id="en-t-login" class="stack">
+                        <div class="field"><label>학급 코드 (숫자 8자리)</label><input id="en-tcode" class="inp" inputmode="numeric" maxlength="9" autocomplete="off"></div>
+                        <div class="field"><label>선생님 비밀번호</label><input id="en-tpw" type="password" class="inp" autocomplete="current-password"></div>
+                        <button class="btn" id="en-login-go">들어가기</button>
+                    </div>
+                    <div id="en-t-create" class="stack" style="display:none">
+                        <div class="field"><label>초대 코드 (학교에서 안내받은 코드)</label><input id="en-invite" class="inp" autocomplete="off"></div>
+                        <div class="field"><label>학급 이름 (선택)</label><input id="en-label" class="inp" maxlength="30" placeholder="예) 3학년 2반"></div>
+                        <div class="field"><label>선생님 비밀번호 (4자 이상)</label><input id="en-pw" type="password" class="inp" autocomplete="new-password"></div>
+                        <div class="field"><label>비밀번호 확인</label><input id="en-pw2" type="password" class="inp" autocomplete="new-password"></div>
+                        <button class="btn" id="en-create-go">학급 만들고 입장하기</button>
+                        <p class="muted" style="margin:0">학급 코드 8자리가 자동으로 만들어져요. 비밀번호는 꼭 기억해 두세요.</p>
+                    </div>
+                </div>
+
+                <div class="fb warn" id="en-msg" style="display:none;margin:0"></div>
+                <div id="en-nourl" class="fb warn" style="display:none;margin:0">서버 주소가 아직 없어요. 선생님이 받은 링크(주소 끝에 <code>?s=…</code>)로 다시 열거나 아래에 주소를 넣어 주세요.
+                    <div class="row" style="margin-top:6px;flex-wrap:nowrap"><input id="en-url" class="inp" placeholder="https://script.google.com/macros/s/.../exec"><button class="btn small" id="en-url-save">저장</button></div></div>
+                <div class="entry-links"><button class="chip" id="en-guest">코드 없이 둘러보기</button><button class="chip" id="en-admin">관리자</button></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 홈 ================= -->
+    <section id="page-home" class="page">
+        <div class="wrap">
+            <div class="panel hero-home">
+                <span class="who-chip" id="hm-who"></span>
+                <h1>나 전달법 놀이터</h1>
+                <p>국어 수업과 생활지도를 한 곳에서, 쉽고 체계적으로. <b>행·감·바</b>(행동·감정·바람)로 내 마음을 말하고, <b>인·사·약</b>(인정·사과·약속)으로 마음을 풀어 보는 연습 공간이에요.</p>
+                <div class="row"><button class="btn ghost small" id="hm-tut">사용법 보기</button></div>
+            </div>
+            <div class="menu-grid" id="hm-menu"></div>
+            <div class="panel" id="hm-dash"></div>
+        </div>
+    </section>
+
+    <section id="page-roleplay" class="page">
         <div class="control-panel">
             <h2 class="cp-title">모둠 구성</h2>
             <div class="cp-ctrl">
                 <label for="situation-mode">상황 방식:</label>
                 <select id="situation-mode" class="inp" style="width:auto">
-                    <option value="each" selected>모둠마다 다른 상황</option>
-                    <option value="all">전체 같은 상황 (모든 모둠 동일)</option>
+                    <option value="each" selected>모둠별 연습 (모둠마다 다른 상황)</option>
+                    <option value="all">전체 연습 (하나의 상황)</option>
                 </select>
                 <label for="group-count">모둠 수:</label>
                 <select id="group-count" class="inp" style="width:auto">
@@ -257,10 +390,10 @@
                     <option value="6">6모둠</option><option value="8">8모둠</option>
                     <option value="9">9모둠</option><option value="12">12모둠</option>
                 </select>
-                <button id="start-btn" class="btn">상황 뽑기!</button>
+                <button id="start-btn" class="btn">전체 다시 뽑기</button>
             </div>
         </div>
-        <div id="mode-note">전체 모드: 모든 모둠이 같은 상황으로 역할놀이를 해요!</div>
+        <div id="mode-note">전체 연습: 모든 모둠이 이 상황 하나로 함께 역할놀이를 해요!</div>
         <div id="grid-container"></div>
     </section>
 
@@ -527,6 +660,65 @@
     </section>
 
     <!-- ================= 5. 관리자 ================= -->
+    <!-- ================= 내 학급 (선생님) ================= -->
+    <section id="page-myclass" class="page">
+        <div class="wrap">
+            <div class="panel">
+                <h2>내 학급 (선생님용)</h2>
+                <p class="muted" style="margin:0">학급을 만들면 <b>8자리 학급 코드</b>가 자동으로 생겨요. 학생들에게 코드만 알려 주세요. 학생이 제출한 기록은 <b>내 비밀번호로만</b> 볼 수 있어요.</p>
+                <div class="fb warn" id="mc-nourl" style="display:none">서버 주소가 아직 없어요. 관리자(앱을 배포한 선생님)에게 받은 주소를 아래에 넣어 주세요.
+                    <div class="row" style="margin-top:6px"><input id="mc-url" class="inp" style="flex:1 1 260px" placeholder="https://script.google.com/macros/s/.../exec"><button class="btn small" id="mc-url-save">저장</button></div></div>
+            </div>
+
+            <div id="mc-out" class="grid2">
+                <div class="panel">
+                    <h3>새 학급 만들기</h3>
+                    <div class="field"><label>학급 이름 (선택, 나만 알아보는 이름)</label><input id="mc-label" class="inp" maxlength="30" placeholder="예) 3학년 2반"></div>
+                    <div class="field" style="margin-top:6px"><label>선생님 비밀번호 (4자 이상)</label><input id="mc-pw" type="password" class="inp" autocomplete="new-password"></div>
+                    <div class="field" style="margin-top:6px"><label>비밀번호 확인</label><input id="mc-pw2" type="password" class="inp" autocomplete="new-password"></div>
+                    <div class="field" style="margin-top:6px"><label>초대 코드 (학교에서 안내받은 경우에만)</label><input id="mc-invite" class="inp" autocomplete="off"></div>
+                    <div class="row" style="margin-top:8px"><button class="btn" id="mc-create">학급 만들기</button><span class="muted" id="mc-create-msg"></span></div>
+                </div>
+                <div class="panel">
+                    <h3>이미 학급이 있어요</h3>
+                    <div class="field"><label>학급 코드 (8자리)</label><input id="mc-code" class="inp" inputmode="numeric" maxlength="9" autocomplete="off"></div>
+                    <div class="field" style="margin-top:6px"><label>선생님 비밀번호</label><input id="mc-pw3" type="password" class="inp" autocomplete="current-password"></div>
+                    <div class="row" style="margin-top:8px"><button class="btn" id="mc-login">들어가기</button><span class="muted" id="mc-login-msg"></span></div>
+                    <p class="muted" style="margin:8px 0 0">다른 컴퓨터에서도 같은 코드와 비밀번호로 들어올 수 있어요. 비밀번호를 잊으면 관리자에게 초기화를 요청하세요.</p>
+                </div>
+            </div>
+
+            <div id="mc-in" class="stack" style="display:none">
+                <div class="panel">
+                    <div class="row" style="justify-content:space-between">
+                        <div><div class="muted">우리 반 학급 코드 <span id="mc-label-show"></span></div>
+                            <div id="mc-code-show" style="font-size:2.2rem;font-weight:800;letter-spacing:.08em;color:var(--accent-d);line-height:1.2"></div></div>
+                        <div class="row"><button class="btn" id="mc-copy">코드 복사</button><button class="btn ghost" id="mc-logout">로그아웃</button></div>
+                    </div>
+                    <div class="row" style="margin-top:6px"><button class="btn ghost small" id="mc-link">학생 접속 링크 복사</button><span class="muted">서버 주소가 담긴 링크예요. 학생은 이 링크로 열면 바로 입장할 수 있어요.</span></div>
+                    <p class="muted" style="margin:6px 0 0">학생에게: 첫 화면에서 [학생]을 고르고 코드와 번호를 넣어요. (이미 입장했다면 위쪽 [학급 연결] 버튼)  → 학급 코드와 내 <b>번호</b>(이름 말고!)를 한 번만 넣으면 돼요. 우리 반 기기에서 AI 선생님도 이 코드로 쓸 수 있어요.</p>
+                </div>
+                <div class="panel">
+                    <h3>우리 반 학생 제출함</h3>
+                    <p class="muted" style="margin:0 0 8px">학생이 [선생님께 제출]을 누른 기록이에요. 이름은 저장되지 않고 번호만 있어요. 우리 반 기록만 보여요.</p>
+                    <div class="row">
+                        <button class="btn" id="sb-load">불러오기</button>
+                        <input id="sb-filter" class="inp" style="width:120px" inputmode="numeric" placeholder="번호 검색">
+                        <button class="btn ghost" id="sb-csv">CSV 저장</button>
+                        <button class="btn ghost danger" id="sb-purge" style="color:#fff">우리 반 기록 모두 삭제</button>
+                        <span class="muted" id="sb-msg"></span>
+                    </div>
+                    <div id="sb-box" style="margin-top:10px;overflow:auto;max-height:60vh"></div>
+                </div>
+
+                <details class="acc"><summary>비밀번호 바꾸기 · 학급 삭제</summary>
+                    <div class="row" style="margin-top:8px"><input id="mc-newpw" type="password" class="inp" style="width:200px" autocomplete="new-password" placeholder="새 비밀번호 (4자 이상)"><button class="btn ghost" id="mc-chpw">비밀번호 변경</button></div>
+                    <div class="row" style="margin-top:8px"><button class="btn danger" id="mc-del">이 학급 삭제 (학생 기록 포함)</button><span class="muted" id="mc-msg"></span></div>
+                </details>
+            </div>
+        </div>
+    </section>
+
     <section id="page-admin" class="page">
         <div class="wrap">
             <div class="panel" id="ad-login">
@@ -557,11 +749,9 @@
                     </div>
                     <div class="field" style="margin-top:8px"><label>답변 자유도(temperature): <b id="ad-temp-v"></b> <span class="muted">(낮을수록 차분하고 일정해요)</span></label>
                         <input type="range" id="ad-temp" min="0" max="1" step="0.1"></div>
-                    <div class="field" style="margin-top:12px"><label>Apps Script 웹앱 URL (선택) — 연결하면 학생 기기에 API 키 없이 AI를 쓸 수 있고, 제출 기능이 켜져요 (Firebase 연결 시 모든 기기에 자동 공유)</label>
+                    <div class="field" style="margin-top:12px"><label>Apps Script 웹앱 URL — 연결하면 학생 기기에 API 키 없이 AI를 쓸 수 있고, 선생님 학급 기능이 켜져요. 코드의 PROXY_URL_CONST에 넣어 두면 모든 기기에 자동 적용돼요 (Firebase 연결 시에도 공유)</label>
                         <input id="ad-proxy" class="inp" placeholder="https://script.google.com/macros/s/.../exec"></div>
-                    <div class="field" style="margin-top:8px"><label>교사 열람 키 (스크립트 속성의 TEACHER_KEY와 같은 값 · 이 기기에만 저장)</label>
-                        <input id="ad-tkey" type="password" class="inp" autocomplete="off"></div>
-                    <p class="muted" style="margin:8px 0 0">※ API 키는 Firebase나 GitHub에 올라가지 않고, 이 기기(브라우저)에만 보관돼요. 학생들이 쓰는 기기(교실 PC·태블릿)마다 관리자로 들어와서 한 번씩 넣어 주세요.</p>
+                                        <p class="muted" style="margin:8px 0 0">※ API 키는 Firebase나 GitHub에 올라가지 않고, 이 기기(브라우저)에만 보관돼요. 학생들이 쓰는 기기(교실 PC·태블릿)마다 관리자로 들어와서 한 번씩 넣어 주세요.</p>
                 </div>
 
                 <div class="panel" style="display:flex;flex-direction:column;gap:10px">
@@ -602,16 +792,14 @@
                 </div>
 
                 <div class="panel">
-                    <h3>학생 제출함 (구글 시트에 쌓인 기록)</h3>
-                    <p class="muted" style="margin:0 0 8px">학생이 [선생님께 제출]을 누른 기록이에요. 이름은 저장되지 않고 번호만 있어요. 위에서 웹앱 URL과 열람 키를 저장한 뒤 불러오세요.</p>
+                    <h3>전체 학급 관리 (관리자 전용)</h3>
+                    <p class="muted" style="margin:0 0 8px">선생님들이 만든 학급 목록이에요. 비밀번호를 잊은 선생님의 비밀번호를 새로 정해 주거나, 학급을 지울 수 있어요. (학생 기록 내용은 시트에서만 볼 수 있어요)</p>
                     <div class="row">
-                        <button class="btn" id="sb-load">불러오기</button>
-                        <input id="sb-filter" class="inp" style="width:120px" inputmode="numeric" placeholder="번호 검색">
-                        <button class="btn ghost" id="sb-csv">⬇️ CSV 저장</button>
-                        <button class="btn ghost danger" id="sb-purge" style="color:#fff">전체 삭제</button>
-                        <span class="muted" id="sb-msg"></span>
+                        <input id="am-key" type="password" class="inp" style="width:220px" autocomplete="off" placeholder="관리자 키 (ADMIN_KEY)">
+                        <button class="btn" id="am-load">학급 목록 불러오기</button>
+                        <span class="muted" id="am-msg"></span>
                     </div>
-                    <div id="sb-box" style="margin-top:10px;overflow:auto;max-height:60vh"></div>
+                    <div id="am-box" style="margin-top:10px;overflow:auto;max-height:50vh"></div>
                 </div>
 
                 <details class="acc">
@@ -632,11 +820,22 @@ service cloud.firestore {
         </div>
     </section>
 </main>
+<div id="tut" role="dialog" aria-modal="true" aria-label="사용법">
+    <div class="tut-card">
+        <div class="tut-top"><span class="tut-step" id="tut-step"></span><button class="tut-skip" id="tut-skip">건너뛰기</button></div>
+        <div class="tut-body" id="tut-body"></div>
+        <div class="tut-foot">
+            <button class="btn ghost" id="tut-prev">이전</button>
+            <div class="tut-dots" id="tut-dots"></div>
+            <button class="btn" id="tut-next">다음</button>
+        </div>
+    </div>
+</div>
 <div id="conn-overlay" style="display:none;position:fixed;inset:0;z-index:210;background:rgba(15,23,42,.6);align-items:center;justify-content:center;padding:14px">
     <div class="panel" style="max-width:420px;width:100%">
         <h3>우리 반 연결</h3>
         <p class="muted" style="margin:0 0 8px" id="conn-note"></p>
-        <div class="field"><label>학급 코드 (선생님이 알려 줘요)</label><input id="conn-code" class="inp" autocomplete="off"></div>
+        <div class="field"><label>학급 코드 (숫자 8자리 · 선생님이 알려 줘요)</label><input id="conn-code" class="inp" inputmode="numeric" maxlength="9" autocomplete="off"></div>
         <div class="field" style="margin-top:8px"><label>내 번호</label><input id="conn-no" class="inp" inputmode="numeric" maxlength="2" placeholder="예) 7"></div>
         <p class="muted" style="margin:8px 0 0"><b>이름은 쓰지 않아요.</b> 선생님께는 번호와 내가 쓴 연습 내용만 가요. [제출] 버튼을 누를 때만 보내져요.</p>
         <div class="row" style="margin-top:10px"><button class="btn" id="conn-save">저장</button><button class="btn ghost" id="conn-close">닫기</button></div>
@@ -891,7 +1090,7 @@ async function initFirebase() {
 /* =====================================================================
    4. Gemini 호출
    ===================================================================== */
-const proxyUrl = () => state.proxyUrl || PROXY_URL_CONST;
+const proxyUrl = () => state.proxyUrl || PROXY_URL_CONST || store.get('iMsg.proxyLocal', '') || '';
 const getClassCode = () => store.get('iMsg.classCode', '') || '';
 const getStudentNo = () => store.get('iMsg.studentNo', '') || '';
 async function proxyPost(payload) {
@@ -938,8 +1137,9 @@ function friendlyError(e) {
     if (m === 'NO_CODE') return '위쪽 버튼을 눌러 학급 코드와 내 번호를 먼저 넣어 주세요.';
     if (m === 'BAD_CODE') return '학급 코드가 맞지 않아요. 선생님께 다시 물어봐요.';
     if (m === 'RATE') return '너무 빨리 눌렀어요. 조금 있다가 다시 해 봐요.';
+    if (m === 'CLASS_QUOTA') return '오늘 우리 반이 AI를 많이 썼어요. 조금 뒤에 다시 해 봐요.';
     if (m === 'TOO_LONG') return '글이 너무 길어요. 조금 줄여서 써 볼까요?';
-    if (m === 'SERVER_NO_KEY') return '선생님의 AI 연결 설정(스크립트 속성의 GEMINI_API_KEY)을 확인해 주세요.';
+    if (m === 'SERVER_NO_KEY') return 'AI 연결 설정이 아직 안 되어 있어요. 관리자에게 알려 주세요.';
     if (m === 'BAD_KEY') return 'API 키나 모델 이름이 맞지 않아요. 관리자 페이지에서 확인해 주세요.';
     if (m === 'QUOTA') return '지금 AI가 너무 바빠요. 잠시 뒤에 다시 해 볼까요?';
     if (m === 'NETWORK') return '인터넷 연결을 확인해 주세요.';
@@ -964,9 +1164,13 @@ const hasBlame = t => BLAME_RE.test(t);
    6. 라우팅 / 글씨 크기 / 테마
    ===================================================================== */
 function showPage(name) {
+    if (name !== 'entry' && !store.get('iMsg.role', '')) name = 'entry';
+    document.body.classList.toggle('entry-mode', name === 'entry');
+    if (name === 'home') renderHome();
     $$('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + name));
     $$('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.page === name));
     if (name === 'admin') renderAdmin();
+    if (name === 'myclass') renderMyClass();
     if (name === 'feedback') renderFbPage();
     try { history.replaceState(null, '', '#' + name); } catch (e) {}
 }
@@ -990,7 +1194,8 @@ const modeSelect = $('#situation-mode');
 
 function updateGridLayout(count) {
     let cols, rows;
-    if (count == 2) { cols = 2; rows = 1; }
+    if (count == 1) { cols = 1; rows = 1; }
+    else if (count == 2) { cols = 2; rows = 1; }
     else if (count == 3) { cols = 3; rows = 1; }
     else if (count == 4) { cols = 2; rows = 2; }
     else if (count == 5 || count == 6) { cols = 3; rows = 2; }
@@ -1002,44 +1207,61 @@ function updateGridLayout(count) {
     gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 }
 
+let rp = { allSame: false, picks: [], pairs: [] };
+function randPair(usedKeys) {
+    const idx = chars.map((_, i) => i);
+    for (let tries = 0; tries < 30; tries++) {
+        const s = shuffleArray([...idx]); const k = s[0] + '-' + s[1];
+        if (!usedKeys.includes(k) || tries === 29) return { a: chars[s[0]], b: chars[s[1]], k };
+    }
+}
+function rpCardHtml(i) {
+    const sit = rp.picks[i], { a: A, b: B } = rp.pairs[i], formattedTitle = esc(sitTitle(sit, A, B));
+    const col = (cls, head, items) => `<div class="rp-col ${cls}"><h4>${head}</h4>` + items.map(([k, v]) => `<div class="rp-item"><small>${k}</small><p>"${v}"</p></div>`).join('') + `</div>`;
+    return `
+        <div class="card-container" onclick="this.classList.toggle('flipped')">
+            <div class="card-face rp-front">
+                <span class="rp-badge">${rp.allSame ? '전체 함께' : (i + 1) + '모둠'}</span>
+                <button class="rp-redo" data-redo="${i}" title="이 카드만 다시 뽑기">다시 뽑기</button>
+                <div class="rp-emoji">${sit.emoji}</div>
+                <h3 class="rp-title">${formattedTitle}</h3>
+                <div class="rp-who">${esc(A.emoji)} ${esc(A.name)} ↔ ${esc(B.emoji)} ${esc(B.name)}</div>
+                <div class="rp-hint">눌러서 뒤집기</div>
+            </div>
+            <div class="card-face rp-back rotate-y-180">
+                <div class="rp-top"><span class="e">${sit.emoji}</span><span>${formattedTitle}</span></div>
+                <div class="rp-cols">
+                    ${col('g', esc(A.emoji) + ' ' + esc(A.name) + '의 말하기', [['행동·상황', sit.my_action + ','], ['감정', '나는 ' + sit.my_emotion], ['바람', sit.my_want]])}
+                    ${col('i', esc(B.emoji) + ' ' + esc(B.name) + '의 대답', [['인정', sit.friend_ack], ['사과', sit.friend_apology], ['약속', sit.friend_promise]])}
+                </div>
+            </div>
+        </div>`;
+}
 function renderCards() {
-    const count = parseInt(groupCountSelect.value);
     const allSame = modeSelect.value === 'all';
+    const count = allSame ? 1 : parseInt(groupCountSelect.value);
     updateGridLayout(count);
     gridContainer.innerHTML = '';
     $('#mode-note').style.display = allSame ? 'block' : 'none';
-
+    groupCountSelect.disabled = allSame; groupCountSelect.style.opacity = allSame ? .4 : 1;
     const shuffled = shuffleArray([...situations]);
-    const picks = allSame ? Array(count).fill(shuffled[0]) : shuffled.slice(0, count);
-    const order = shuffleArray(chars.map((_, i) => i)), nC = chars.length;
-    const pairFor = i => allSame ? { a: chars[order[0]], b: chars[order[1]] } : { a: chars[order[(2 * i) % nC]], b: chars[order[(2 * i + 1) % nC]] };
-
-    picks.forEach((sit, index) => {
-        const { a: A, b: B } = pairFor(index);
-        const formattedTitle = esc(sitTitle(sit, A, B));
-        const cardEl = document.createElement('div');
-        cardEl.className = 'rp-card';
-        const col = (cls, head, items) => `<div class="rp-col ${cls}"><h4>${head}</h4>` + items.map(([k, v]) => `<div class="rp-item"><small>${k}</small><p>"${v}"</p></div>`).join('') + `</div>`;
-        cardEl.innerHTML = `
-            <div class="card-container" onclick="this.classList.toggle('flipped')">
-                <div class="card-face rp-front">
-                    <span class="rp-badge">${index + 1}모둠${allSame ? ' · 전체' : ''}</span>
-                    <div class="rp-emoji">${sit.emoji}</div>
-                    <h3 class="rp-title">${formattedTitle}</h3>
-                    <div class="rp-who">${esc(A.emoji)} ${esc(A.name)} ↔ ${esc(B.emoji)} ${esc(B.name)}</div>
-                    <div class="rp-hint">눌러서 뒤집기</div>
-                </div>
-                <div class="card-face rp-back rotate-y-180">
-                    <div class="rp-top"><span class="e">${sit.emoji}</span><span>${formattedTitle}</span></div>
-                    <div class="rp-cols">
-                        ${col('g', esc(A.emoji) + ' ' + esc(A.name) + '의 말하기', [['행동·상황', sit.my_action + ','], ['감정', '나는 ' + sit.my_emotion], ['바람', sit.my_want]])}
-                        ${col('i', esc(B.emoji) + ' ' + esc(B.name) + '의 대답', [['인정', sit.friend_ack], ['사과', sit.friend_apology], ['약속', sit.friend_promise]])}
-                    </div>
-                </div>
-            </div>`;
-        gridContainer.appendChild(cardEl);
-    });
+    const used = [];
+    rp = { allSame, picks: shuffled.slice(0, count), pairs: [] };
+    for (let i = 0; i < count; i++) { const pr = randPair(used); used.push(pr.k); rp.pairs.push(pr); }
+    rp.picks.forEach((_, i) => { const el = document.createElement('div'); el.className = 'rp-card' + (allSame ? ' big' : ''); el.innerHTML = rpCardHtml(i); gridContainer.appendChild(el); });
 }
+gridContainer.addEventListener('click', e => {
+    const bt = e.target.closest('[data-redo]'); if (!bt) return;
+    e.stopPropagation();
+    const i = +bt.dataset.redo;
+    const others = rp.picks.filter((_, j) => j !== i).map(s => s.id);
+    let pool = situations.filter(s => !others.includes(s.id) && s.id !== rp.picks[i].id);
+    if (!pool.length) pool = situations.filter(s => s.id !== rp.picks[i].id);
+    rp.picks[i] = pool[Math.floor(Math.random() * pool.length)];
+    const used = rp.pairs.filter((_, j) => j !== i).map(x => x.k);
+    rp.pairs[i] = randPair(used);
+    const el = gridContainer.children[i]; el.innerHTML = rpCardHtml(i);
+});
 $('#start-btn').addEventListener('click', () => { const b = $('#start-btn'); b.classList.add('scale-90'); setTimeout(() => b.classList.remove('scale-90'), 150); renderCards(); });
 groupCountSelect.addEventListener('change', renderCards);
 modeSelect.addEventListener('change', renderCards);
@@ -1338,6 +1560,7 @@ prSel.onchange = () => renderPracticeCard();
 $('#pr-custom').addEventListener('input', () => renderPracticeCard(false));
 $('#pr-random').onclick = () => { const l = allSits(); prSel.value = l[Math.floor(Math.random() * l.length)].id; renderPracticeCard(); };
 $('#pr-check').onclick = checkPractice;
+$('#pr-check').addEventListener('click', () => { const v = {}; PR_KEYS.forEach(k => v[k] = prVal(k)); if (!PR_KEYS.some(k => v[k])) return; const res = evalFeedback(activeFb(), v); statsAdd(PR_KEYS.filter(k => res[k].ok).length, false); });
 $('#pr-ai-btn').onclick = aiFeedback;
 $('#pr-model').onclick = showModel;
 $('#pr-reset').onclick = () => resetPractice();
@@ -1778,7 +2001,7 @@ function fillAdminForm() {
     GUIDE_KEYS.forEach(k => { const el = $('#g-' + k); if (el && document.activeElement !== el) el.value = state.guide[k]; });
     $('#ad-key').value = getApiKey();
     $('#ad-model').value = state.model;
-    $('#ad-proxy').value = state.proxyUrl || ''; $('#ad-tkey').value = store.get('iMsg.teacherKey', '') || '';
+    $('#ad-proxy').value = state.proxyUrl || '';
     $('#ad-temp').value = state.temperature; $('#ad-temp-v').textContent = state.temperature;
 }
 function readAdminForm() {
@@ -1798,7 +2021,6 @@ $('#ad-save').onclick = async () => {
     applyGuide(data); state.model = data.model; state.temperature = data.temperature;
     store.set('iMsg.guide', JSON.stringify(data)); store.set('iMsg.model', state.model); store.set('iMsg.temp', String(state.temperature));
     const key = $('#ad-key').value.trim(); if (key) store.set(KEY_STORE, key); else store.del(KEY_STORE);
-    const tk = $('#ad-tkey').value.trim(); if (tk) store.set('iMsg.teacherKey', tk); else store.del('iMsg.teacherKey');
     let where = '이 기기';
     if (state.fb && state.adminUser) {
         try { const { F, db } = state.fb; await F.setDoc(F.doc(db, ...GUIDE_DOC), { ...data, updatedAt: F.serverTimestamp(), updatedBy: state.adminUser }, { merge: true }); where = 'Firebase + 이 기기'; }
@@ -1846,7 +2068,7 @@ const PII_RE = /\d[\d\s-]{6,}\d|@|https?:\/\//i;
 function updateConnBtn() { const n = getStudentNo(); $('#conn-btn').textContent = n ? `${n}번` : '학급 연결'; }
 function openConn() {
     $('#conn-code').value = getClassCode(); $('#conn-no').value = getStudentNo();
-    $('#conn-note').textContent = proxyUrl() ? '선생님이 알려 준 학급 코드와 내 번호를 한 번만 넣으면 돼요.' : '선생님이 아직 연결 설정을 하지 않았어요. (관리자 화면에서 Apps Script URL을 넣으면 켜져요)';
+    $('#conn-note').textContent = proxyUrl() ? '선생님이 알려 준 학급 코드와 내 번호를 한 번만 넣으면 돼요.' : '선생님이 아직 연결 설정을 하지 않았어요. (관리자에게 알려 주세요)';
     $('#conn-overlay').style.display = 'flex';
 }
 $('#conn-btn').onclick = openConn;
@@ -1854,7 +2076,9 @@ $('#conn-close').onclick = () => $('#conn-overlay').style.display = 'none';
 $('#conn-save').onclick = () => {
     const no = $('#conn-no').value.trim();
     if (no && !/^\d{1,2}$/.test(no)) { toast('번호는 숫자로 써 주세요 (예: 7)'); return; }
-    store.set('iMsg.classCode', $('#conn-code').value.trim()); store.set('iMsg.studentNo', no);
+    const cc = $('#conn-code').value.replace(/\D/g, '');
+    if (cc && cc.length !== 8) { toast('학급 코드는 숫자 8자리예요'); return; }
+    store.set('iMsg.classCode', cc); store.set('iMsg.studentNo', no);
     updateConnBtn(); $('#conn-overlay').style.display = 'none'; toast('저장했어요');
 };
 async function submitRecord(v, sitText) {
@@ -1866,7 +2090,7 @@ async function submitRecord(v, sitText) {
     const res = evalFeedback(activeFb(), v), pass = PR_KEYS.filter(k => res[k].ok).length, c = curChars();
     try {
         const j = await proxyPost({ action: 'submit', code: getClassCode(), number: getStudentNo(), chars: `${c.a.name}/${c.b.name}`, situation: sitText, ...v, pass });
-        if (j.ok) toast('선생님께 제출했어요!');
+        if (j.ok) { toast('선생님께 제출했어요!'); statsAdd(null, true); }
         else if (j.error === 'BAD_CODE') toast('학급 코드가 맞지 않아요');
         else if (j.error === 'PII') toast('개인정보처럼 보이는 내용이 있어요. 지우고 다시 해 주세요');
         else if (j.error === 'RATE') toast('너무 빨리 눌렀어요. 잠시 뒤에 다시 해 주세요');
@@ -1882,21 +2106,26 @@ $('#ws-submit').onclick = () => {
 /* ----- 교사: 제출함 보기 ----- */
 let sbRows = [];
 const SB_COLS = ['번호', '제출시각', '캐릭터(말하는/대답하는)', '상황', '행동·상황', '감정', '바람', '인정', '사과', '약속', '자동점검 통과(6칸 중)'];
-const teacherKey = () => store.get('iMsg.teacherKey', '') || '';
+
 function renderSb() {
     const f = $('#sb-filter').value.trim(), rows = f ? sbRows.filter(r => String(r['번호']) === f) : sbRows;
     if (!rows.length) { $('#sb-box').innerHTML = '<div class="muted">표시할 기록이 없어요.</div>'; return; }
     $('#sb-box').innerHTML = `<table style="border-collapse:collapse;font-size:.85rem;min-width:900px"><thead><tr>${SB_COLS.map(c => `<th style="border:1px solid var(--border);padding:4px 6px;background:var(--surface2);text-align:left;white-space:nowrap">${esc(c.replace('(말하는/대답하는)', '').replace('자동점검 통과(6칸 중)', '통과'))}</th>`).join('')}</tr></thead><tbody>` +
         rows.map(r => `<tr>${SB_COLS.map(c => `<td style="border:1px solid var(--border);padding:4px 6px;vertical-align:top">${esc(r[c])}</td>`).join('')}</tr>`).join('') + '</tbody></table>';
 }
-function sbErr(e) {
+function srvErr(e) {
     const m = String(e.message || e);
-    return m === 'NO_PROXY' ? '먼저 위에서 웹앱 URL을 저장해 주세요.' : m === 'NETWORK' ? '서버에 연결하지 못했어요. URL과 배포 설정(모든 사용자)을 확인해 주세요.' : m === 'BAD_KEY' ? '열람 키가 맞지 않아요.' : '불러오지 못했어요. (' + m + ')';
+    const M = { NO_PROXY: '서버 주소가 아직 없어요. 위 안내를 따라 주소를 넣어 주세요.', NETWORK: '서버에 연결하지 못했어요. 인터넷과 서버 주소를 확인해 주세요.',
+        BAD_PW: '비밀번호가 맞지 않아요.', NO_CLASS: '그런 학급 코드가 없어요.', LOCKED: '여러 번 틀려서 10분 동안 잠겼어요. 잠시 뒤에 다시 해 주세요.',
+        WEAK_PW: '비밀번호는 4자 이상으로 해 주세요.', BAD_INVITE: '초대 코드가 맞지 않아요.', FULL: '학급을 더 만들 수 없어요. 관리자에게 알려 주세요.',
+        RATE: '너무 자주 눌렀어요. 잠시 뒤에 다시 해 주세요.', BAD_ADMIN: '관리자 키가 맞지 않아요.', BAD_ACTION: '서버가 오래된 버전이에요. 관리자에게 알려 주세요.' };
+    return M[m] || ('처리하지 못했어요. (' + m + ')');
 }
+const sbErr = srvErr;
 $('#sb-load').onclick = async () => {
     const msg = $('#sb-msg'); msg.textContent = '불러오는 중…';
     try {
-        const j = await proxyPost({ action: 'read', teacherKey: teacherKey() });
+        const j = await proxyPost({ action: 'read', code: myCode(), password: myPw() });
         if (!j.ok) throw new Error(j.error || 'SERVER');
         sbRows = j.rows || []; msg.textContent = `최근 ${sbRows.length}건 (전체 ${j.total || 0}건)`; renderSb();
     } catch (e) { msg.textContent = sbErr(e); }
@@ -1909,10 +2138,289 @@ $('#sb-csv').onclick = () => {
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = '나전달법_제출함.csv'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 };
 $('#sb-purge').onclick = async () => {
-    if (!confirm('제출함의 모든 기록을 지울까요? 되돌릴 수 없어요.')) return;
-    try { const j = await proxyPost({ action: 'purge', teacherKey: teacherKey() }); if (!j.ok) throw new Error(j.error); sbRows = []; renderSb(); $('#sb-msg').textContent = '모두 지웠어요.'; }
+    if (!confirm('우리 반 제출 기록을 모두 지울까요? 되돌릴 수 없어요.')) return;
+    try { const j = await proxyPost({ action: 'purge', code: myCode(), password: myPw() }); if (!j.ok) throw new Error(j.error); sbRows = []; renderSb(); $('#sb-msg').textContent = '모두 지웠어요.'; }
     catch (e) { $('#sb-msg').textContent = sbErr(e); }
 };
+
+/* ----- 선생님: 내 학급 (코드 자동 생성 · 비밀번호) ----- */
+const myCode = () => store.get('iMsg.myCode', '') || '';
+const myPw = () => store.get('iMsg.myPw', '') || '';
+const fmtCode = c => String(c).replace(/(\d{4})(\d{4})/, '$1 $2');
+function renderMyClass() {
+    $('#mc-nourl').style.display = proxyUrl() ? 'none' : 'block';
+    const inn = !!(myCode() && myPw());
+    $('#mc-out').style.display = inn ? 'none' : 'grid'; $('#mc-in').style.display = inn ? 'flex' : 'none';
+    if (inn) { $('#mc-code-show').textContent = fmtCode(myCode()); $('#mc-label-show').textContent = store.get('iMsg.myLabel', '') ? '· ' + store.get('iMsg.myLabel', '') : ''; }
+}
+function mcEnter(code, pw, label) {
+    store.set('iMsg.myCode', code); store.set('iMsg.myPw', pw); store.set('iMsg.myLabel', label || '');
+    if (!getClassCode()) store.set('iMsg.classCode', code);   // 이 기기에서 AI 선생님도 바로 쓸 수 있게
+    sbRows = []; renderSb(); $('#sb-msg').textContent = ''; renderMyClass();
+}
+$('#mc-url-save').onclick = () => { const u = $('#mc-url').value.trim(); if (u) store.set('iMsg.proxyLocal', u); renderMyClass(); toast('저장했어요'); };
+async function tcCreate(label, pw, pw2, invite, msg) {
+    if (pw.length < 4) { msg.textContent = '비밀번호는 4자 이상으로 해 주세요.'; return false; }
+    if (pw !== pw2) { msg.textContent = '비밀번호 확인이 달라요.'; return false; }
+    msg.textContent = '만드는 중…';
+    try {
+        const j = await proxyPost({ action: 'createClass', password: pw, label, invite });
+        if (!j.ok) throw new Error(j.error || 'SERVER');
+        mcEnter(j.code, pw, label); msg.textContent = ''; return true;
+    } catch (e) { msg.textContent = srvErr(e); return false; }
+}
+async function tcLogin(code, pw, msg) {
+    code = String(code).replace(/\D/g, '');
+    if (code.length !== 8) { msg.textContent = '학급 코드는 숫자 8자리예요.'; return false; }
+    msg.textContent = '확인 중…';
+    try {
+        const j = await proxyPost({ action: 'login', code, password: pw });
+        if (!j.ok) throw new Error(j.error || 'SERVER');
+        mcEnter(j.code, pw, j.label); msg.textContent = ''; return true;
+    } catch (e) { msg.textContent = srvErr(e); return false; }
+}
+$('#mc-create').onclick = async () => {
+    if (await tcCreate($('#mc-label').value.trim(), $('#mc-pw').value, $('#mc-pw2').value, $('#mc-invite').value.trim(), $('#mc-create-msg'))) {
+        ['mc-pw', 'mc-pw2'].forEach(i => $('#' + i).value = ''); toast('학급이 만들어졌어요! 코드를 학생들에게 알려 주세요.');
+    }
+};
+$('#mc-login').onclick = async () => { if (await tcLogin($('#mc-code').value, $('#mc-pw3').value, $('#mc-login-msg'))) $('#mc-pw3').value = ''; };
+function studentLink() { const u = proxyUrl(); return location.origin === 'null' || location.protocol === 'file:' ? location.href.split(/[?#]/)[0] + (u ? '?s=' + u : '') : location.origin + location.pathname + (u ? '?s=' + u : ''); }
+$('#mc-link').onclick = async () => { const l = studentLink(); try { await navigator.clipboard.writeText(l); toast('학생 접속 링크를 복사했어요'); } catch (e) { prompt('아래 링크를 복사하세요', l); } };
+$('#mc-logout').onclick = () => { ['iMsg.myCode', 'iMsg.myPw', 'iMsg.myLabel'].forEach(k => store.del(k)); renderMyClass(); };
+$('#mc-copy').onclick = async () => { try { await navigator.clipboard.writeText(myCode()); toast('학급 코드를 복사했어요'); } catch (e) { toast('코드: ' + myCode()); } };
+$('#mc-chpw').onclick = async () => {
+    const np = $('#mc-newpw').value, msg = $('#mc-msg');
+    try {
+        const j = await proxyPost({ action: 'changePassword', code: myCode(), password: myPw(), newPassword: np });
+        if (!j.ok) throw new Error(j.error || 'SERVER');
+        store.set('iMsg.myPw', np); $('#mc-newpw').value = ''; msg.textContent = '비밀번호를 바꿨어요.';
+    } catch (e) { msg.textContent = srvErr(e); }
+};
+$('#mc-del').onclick = async () => {
+    if (!confirm('이 학급과 학생 기록을 모두 지울까요? 되돌릴 수 없어요.')) return;
+    try {
+        const j = await proxyPost({ action: 'deleteClass', code: myCode(), password: myPw() });
+        if (!j.ok) throw new Error(j.error || 'SERVER');
+        if (getClassCode() === myCode()) store.del('iMsg.classCode');
+        $('#mc-logout').click(); toast('학급을 지웠어요');
+    } catch (e) { $('#mc-msg').textContent = srvErr(e); }
+};
+
+/* ----- 관리자: 전체 학급 관리 ----- */
+const amKey = () => $('#am-key').value.trim() || store.get('iMsg.adminKey', '') || '';
+function amRender(list) {
+    if (!list.length) { $('#am-box').innerHTML = '<div class="muted">아직 만들어진 학급이 없어요.</div>'; return; }
+    $('#am-box').innerHTML = `<table style="border-collapse:collapse;font-size:.88rem;width:100%"><thead><tr>${['학급 코드', '이름', '만든 날', '마지막 사용', '제출 건수', ''].map(c => `<th style="border:1px solid var(--border);padding:4px 6px;background:var(--surface2);text-align:left;white-space:nowrap">${c}</th>`).join('')}</tr></thead><tbody>` +
+        list.map(c => `<tr>${[fmtCode(c.code), c.label, c.created, c.lastUsed, c.submissions].map(v => `<td style="border:1px solid var(--border);padding:4px 6px">${esc(v)}</td>`).join('')}<td style="border:1px solid var(--border);padding:4px 6px;white-space:nowrap"><button class="btn ghost small" data-am="reset" data-code="${esc(c.code)}">비번 초기화</button> <button class="btn ghost small danger" style="color:#fff" data-am="del" data-code="${esc(c.code)}">삭제</button></td></tr>`).join('') + '</tbody></table>';
+}
+async function amLoad() {
+    const msg = $('#am-msg'); msg.textContent = '불러오는 중…';
+    try {
+        const j = await proxyPost({ action: 'adminList', adminKey: amKey() });
+        if (!j.ok) throw new Error(j.error || 'SERVER');
+        if ($('#am-key').value.trim()) store.set('iMsg.adminKey', $('#am-key').value.trim());
+        msg.textContent = `${j.classes.length}개 학급`; amRender(j.classes);
+    } catch (e) { msg.textContent = srvErr(e); }
+}
+$('#am-load').onclick = amLoad;
+$('#am-box').addEventListener('click', async ev => {
+    const b = ev.target.closest('[data-am]'); if (!b) return;
+    const code = b.dataset.code, msg = $('#am-msg');
+    try {
+        if (b.dataset.am === 'reset') {
+            const np = prompt(`${fmtCode(code)} 학급의 새 비밀번호를 정해 주세요 (4자 이상)`); if (!np) return;
+            const j = await proxyPost({ action: 'adminReset', adminKey: amKey(), code, newPassword: np });
+            if (!j.ok) throw new Error(j.error); msg.textContent = '비밀번호를 새로 정했어요. 선생님께 알려 주세요.';
+        } else {
+            if (!confirm(`${fmtCode(code)} 학급과 기록을 모두 지울까요?`)) return;
+            const j = await proxyPost({ action: 'adminDelete', adminKey: amKey(), code });
+            if (!j.ok) throw new Error(j.error); await amLoad();
+        }
+    } catch (e) { msg.textContent = srvErr(e); }
+});
+
+/* =====================================================================
+   13. 사용법(튜토리얼) — 처음 열 때 한 번, [사용법] 버튼으로 언제든
+   ===================================================================== */
+const TUT = [
+    { h: '나 전달법 놀이터에 오신 걸 환영해요', html: `
+        <p>친구와 마음이 불편했을 때, <b>탓하는 말</b> 대신 <b>내 마음</b>을 말하는 연습을 하는 곳이에요.</p>
+        <div class="tut-two">
+            <div class="tut-box g"><b>행·감·바 (말하는 친구)</b><span><u>행</u>동(상황): 나에게 생긴 일<br><u>감</u>정: 내 마음<br><u>바</u>람: 이렇게 해 주면 좋겠어</span></div>
+            <div class="tut-box i"><b>인·사·약 (대답하는 친구)</b><span><u>인</u>정: 내가 한 일을 솔직하게<br><u>사</u>과: 진심을 담아<br><u>약</u>속: 앞으로 어떻게 할지</span></div>
+        </div>
+        <div class="tut-ex">“너 때문에 못 썼잖아!” 대신<br><b>“연필이 없어서 답답해. 먼저 물어봐 주면 좋겠어.”</b></div>` },
+    { h: '모둠 역할놀이', page: 'roleplay', go: '역할놀이 하러 가기', html: `
+        <ul class="tut-list">
+            <li><i>1</i><span>위에서 <b>모둠 수</b>를 고르고 <b>전체 다시 뽑기</b>를 눌러요.</span></li>
+            <li><i>2</i><span>카드를 <b>눌러서 뒤집으면</b> 말하기·대답 예시가 나와요.</span></li>
+            <li><i>3</i><span>카드의 <b>다시 뽑기</b>는 그 모둠 상황만 새로 바꿔요.</span></li>
+            <li><i>4</i><span>‘전체 연습’을 고르면 모두 같은 상황 하나로 크게 함께 해요.</span></li>
+        </ul>` },
+    { h: '나 전달법 연습', page: 'practice', go: '연습하러 가기', html: `
+        <ul class="tut-list">
+            <li><i>1</i><span>상황을 고르거나 <b>검색</b>해요. (랜덤 상황도 있어요)</span></li>
+            <li><i>2</i><span>1단계(행·감·바), 2단계(인·사·약) 칸에 내 말을 써요.</span></li>
+            <li><i>3</i><span><b>점검하기</b>를 누르면 잘 썼는지 알려 줘요. 예시 보기도 있어요.</span></li>
+            <li><i>4</i><span>선생님은 <b>상황 만들기</b>와 <b>활동지 인쇄</b>(A4, PDF 저장)도 할 수 있어요.</span></li>
+        </ul>` },
+    { h: '실제 상황을 도와줘', page: 'help', go: '도움 받으러 가기', html: `
+        <ul class="tut-list">
+            <li><i>1</i><span>우리 반에서 일어난 일을 써요. 이름 대신 <b>A, B, C</b>로 쓰면 돼요.</span></li>
+            <li><i>2</i><span>A, B, C는 자동으로 <b>동물 캐릭터 이름</b>으로 바뀌어요.</span></li>
+            <li><i>3</i><span><b>표현 추천받기</b>를 누르면 행·감·바와 인·사·약 말하기를 추천해요.</span></li>
+        </ul>` },
+    { h: 'AI 선생님', page: 'agent', go: 'AI 선생님 만나러 가기', html: `
+        <ul class="tut-list">
+            <li><i>학생</i><span>AI 선생님이 <b>질문</b>만 해요. 답은 내 입에서 나와요. 이름과 개인정보는 쓰지 않아요.</span></li>
+            <li><i>교사</i><span>학생 지도 방법을 상담해요. 위의 <b>학생/교사</b> 버튼으로 바꿔요.</span></li>
+            <li><i>쓰기</i><span>오른쪽 칸에 내 말을 쓰고 <b>AI 선생님께 보여주기</b>를 눌러요.</span></li>
+        </ul>` },
+    { h: '우리 반 연결', page: 'myclass', go: '내 학급으로 가기', html: `
+        <p><b>학생</b></p>
+        <ul class="tut-list">
+            <li><i>1</i><span>위쪽 <b>학급 연결</b> 버튼을 눌러요.</span></li>
+            <li><i>2</i><span>선생님이 알려 준 <b>학급 코드(숫자 8자리)</b>와 내 <b>번호</b>를 넣어요. (이름은 쓰지 않아요)</span></li>
+        </ul>
+        <p><b>선생님</b></p>
+        <ul class="tut-list">
+            <li><i>1</i><span><b>내 학급</b> 탭에서 비밀번호를 정하면 학급 코드가 자동으로 만들어져요.</span></li>
+            <li><i>2</i><span>코드를 학생에게 알려 주면, 학생이 제출한 기록을 내 비밀번호로 볼 수 있어요.</span></li>
+        </ul>` },
+    { h: '화면을 편하게', html: `
+        <ul class="tut-list">
+            <li><i>가</i><span>오른쪽 위 <b>가-</b>, <b>가+</b>로 글씨 크기를 바꿔요.</span></li>
+            <li><i>밤</i><span><b>어둡게/밝게</b> 버튼으로 화면 색을 바꿔요.</span></li>
+            <li><i>?</i><span>이 설명은 위쪽 <b>사용법</b> 버튼으로 언제든 다시 볼 수 있어요.</span></li>
+        </ul>
+        <p>자, 이제 시작해 볼까요?</p>` }
+];
+let tutI = 0;
+function tutRender() {
+    const s = TUT[tutI], last = tutI === TUT.length - 1;
+    $('#tut-step').textContent = `${tutI + 1} / ${TUT.length}`;
+    $('#tut-body').innerHTML = `<h2>${s.h}</h2>${s.html}` + ((s.page && !(s.page === 'myclass' && role() !== 'teacher')) ? `<button class="btn ghost tut-go" data-tgo="${s.page}">${s.go}</button>` : '');
+    $('#tut-dots').innerHTML = TUT.map((_, i) => `<b class="${i === tutI ? 'on' : ''}"></b>`).join('');
+    $('#tut-prev').style.visibility = tutI ? 'visible' : 'hidden';
+    $('#tut-next').textContent = last ? '시작하기' : '다음';
+    $('#tut-skip').style.visibility = last ? 'hidden' : 'visible';
+    $('#tut-body').scrollTop = 0;
+}
+function tutOpen(i) { tutI = i || 0; tutRender(); $('#tut').classList.add('open'); }
+function tutClose() { $('#tut').classList.remove('open'); store.set('iMsg.tutDone', '1'); }
+$('#help-btn').onclick = () => tutOpen(0);
+$('#tut-skip').onclick = tutClose;
+$('#tut-prev').onclick = () => { if (tutI > 0) { tutI--; tutRender(); } };
+$('#tut-next').onclick = () => { if (tutI < TUT.length - 1) { tutI++; tutRender(); } else tutClose(); };
+$('#tut-body').addEventListener('click', e => { const b = e.target.closest('[data-tgo]'); if (b) { tutClose(); showPage(b.dataset.tgo); } });
+document.addEventListener('keydown', e => { if (!$('#tut').classList.contains('open')) return; if (e.key === 'Escape') tutClose(); else if (e.key === 'ArrowRight') $('#tut-next').click(); else if (e.key === 'ArrowLeft') $('#tut-prev').click(); });
+
+/* =====================================================================
+   14. 입장(학생/선생님) · 홈 화면
+   ===================================================================== */
+(function () {   // 링크로 서버 주소 받기: 앱주소?s=https://script.google.com/macros/s/…/exec
+    try { const s = new URLSearchParams(location.search).get('s'); if (s && /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(s)) store.set('iMsg.proxyLocal', s); } catch (e) {}
+})();
+const role = () => store.get('iMsg.role', '') || '';
+const roleLabel = () => role() === 'teacher' ? (myCode() ? (store.get('iMsg.myLabel', '') || fmtCode(myCode())) + ' 선생님' : '선생님') : role() === 'student' ? (getClassCode() ? `학생 · ${getStudentNo() || '?'}번` : '학생') : '둘러보기';
+function applyRole() { document.body.dataset.role = role(); updateConnBtn(); }
+function enterApp(r) {
+    store.set('iMsg.role', r); applyRole(); showPage('home');
+    if (!store.get('iMsg.tutDone', '')) tutOpen(0);
+}
+function enMsg(m) { const el = $('#en-msg'); el.textContent = m || ''; el.style.display = m ? 'block' : 'none'; }
+function enRefresh() { $('#en-nourl').style.display = proxyUrl() ? 'none' : 'block'; }
+$$('#en-seg button').forEach(b => b.onclick = () => { $$('#en-seg button').forEach(x => x.classList.toggle('on', x === b)); $('#en-student').style.display = b.dataset.r === 'student' ? 'flex' : 'none'; $('#en-teacher').style.display = b.dataset.r === 'teacher' ? 'flex' : 'none'; enMsg(''); });
+$$('#en-tseg button').forEach(b => b.onclick = () => { $$('#en-tseg button').forEach(x => x.classList.toggle('on', x === b)); $('#en-t-login').style.display = b.dataset.t === 'login' ? 'flex' : 'none'; $('#en-t-create').style.display = b.dataset.t === 'create' ? 'flex' : 'none'; enMsg(''); });
+$('#en-url-save').onclick = () => { const u = $('#en-url').value.trim(); if (/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u)) { store.set('iMsg.proxyLocal', u); enRefresh(); toast('저장했어요'); } else enMsg('주소 형식이 맞지 않아요. https://script.google.com/macros/s/…/exec'); };
+$('#en-student-go').onclick = async () => {
+    const code = $('#en-code').value.replace(/\D/g, ''), no = $('#en-no').value.trim();
+    if (code.length !== 8) { enMsg('학급 코드는 숫자 8자리예요.'); return; }
+    if (!/^\d{1,2}$/.test(no)) { enMsg('번호는 숫자로 써 주세요 (예: 7)'); return; }
+    enMsg('확인 중…');
+    try {
+        const j = await proxyPost({ action: 'checkClass', code });
+        if (!j.ok) throw new Error(j.error === 'BAD_CODE' || j.error === 'NO_CLASS' ? 'NO_CLASS' : (j.error || 'SERVER'));
+        store.set('iMsg.classCode', code); store.set('iMsg.studentNo', no); enMsg(''); enterApp('student');
+    } catch (e) { enMsg(srvErr(e) + (/NETWORK|NO_PROXY/.test(e.message) ? ' (아래 [코드 없이 둘러보기]로 연습은 할 수 있어요)' : '')); }
+};
+$('#en-login-go').onclick = async () => { const ok = await tcLogin($('#en-tcode').value, $('#en-tpw').value, { set textContent(v) { enMsg(v); } }); if (ok) { $('#en-tpw').value = ''; enterApp('teacher'); } };
+$('#en-create-go').onclick = async () => {
+    const ok = await tcCreate($('#en-label').value.trim(), $('#en-pw').value, $('#en-pw2').value, $('#en-invite').value.trim(), { set textContent(v) { enMsg(v); } });
+    if (ok) { ['en-pw', 'en-pw2'].forEach(i => $('#' + i).value = ''); toast('학급이 만들어졌어요! 홈에서 코드를 확인하세요.'); enterApp('teacher'); }
+};
+$('#en-guest').onclick = () => enterApp('guest');
+$('#en-admin').onclick = () => { store.set('iMsg.role', 'teacher'); applyRole(); showPage('admin'); };
+$('#exit-btn').onclick = () => { store.del('iMsg.role'); applyRole(); showPage('entry'); };
+$('#app-title').onclick = () => showPage(role() ? 'home' : 'entry');
+$('#hm-tut').onclick = () => tutOpen(0);
+
+/* ----- 학생 개인 기록(이 기기에만 저장) ----- */
+function getStats() { try { return JSON.parse(store.get('iMsg.stats', '') || '') || { n: 0, six: 0, sub: 0, hist: [] }; } catch (e) { return { n: 0, six: 0, sub: 0, hist: [] }; } }
+function statsAdd(pass, submitted) {
+    const s = getStats();
+    if (submitted) s.sub++;
+    if (pass !== null) { s.n++; if (pass === 6) s.six++; s.hist = (s.hist || []).concat(pass).slice(-10); }
+    store.set('iMsg.stats', JSON.stringify(s));
+}
+
+/* ----- 홈 ----- */
+const MENU = [
+    { page: 'roleplay', t: '모둠 역할놀이', d: '모둠마다 상황을 뽑고, 카드를 뒤집어 말하기·대답 예시를 확인해요.' },
+    { page: 'practice', t: '나 전달법 연습', d: '상황을 골라 행·감·바, 인·사·약을 직접 써 보고 점검해요. 활동지 인쇄도 있어요.' },
+    { page: 'help', t: '실제 상황을 도와줘', d: '우리 반에서 일어난 일을 쓰면 말하기 표현을 추천해 줘요.' },
+    { page: 'agent', t: 'AI 선생님', d: '질문을 따라 내 말로 정리해요. 선생님은 지도 방법을 상담할 수 있어요.' },
+    { page: 'myclass', t: '내 학급', d: '학급 코드, 학생 제출함, 비밀번호를 관리해요.', teacher: true },
+    { page: 'feedback', t: '피드백 지침', d: '행감바·인사약 피드백 기준을 우리 반에 맞게 고쳐요.', teacher: true }
+];
+function renderHome() {
+    $('#hm-who').textContent = roleLabel();
+    $('#hm-menu').innerHTML = MENU.filter(m => !m.teacher || role() === 'teacher').map((m, i) => `<button class="menu-card" data-go="${m.page}"><span class="mc-no">${String(i + 1).padStart(2, '0')}</span><b>${m.t}</b><span>${m.d}</span></button>`).join('');
+    if (role() === 'teacher') renderTeacherDash(); else renderStudentDash();
+}
+$('#hm-menu').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) showPage(b.dataset.go); });
+function renderStudentDash() {
+    const s = getStats(), box = $('#hm-dash'), sit = situations[Math.floor(Math.random() * situations.length)];
+    const hist = s.hist || [], mx = 6;
+    box.innerHTML = `<div class="dash-title"><h3 style="margin:0">나의 연습 기록</h3><span class="muted">이 기기에만 저장돼요</span></div>
+        <div class="tiles"><div class="tile"><small>점검한 횟수</small><b>${s.n}<em>번</em></b></div><div class="tile"><small>6칸 모두 통과</small><b>${s.six}<em>번</em></b></div><div class="tile"><small>선생님께 제출</small><b>${s.sub}<em>번</em></b></div></div>` +
+        (hist.length ? `<div class="muted" style="margin-bottom:2px">최근 점검 결과 (통과한 칸 수)</div><div class="bars">${hist.map(v => `<div class="col"><span>${v}</span><i class="${v === 6 ? 'hi' : ''}" style="height:${Math.max(2, v / mx * 90)}px"></i></div>`).join('')}</div>` : `<div class="muted">아직 점검한 기록이 없어요. 연습을 시작해 볼까요?</div>`) +
+        `<hr><div class="row" style="justify-content:space-between"><div><div class="muted">오늘의 연습 상황</div><b>${esc(listTitle(sit))}</b></div><button class="btn" id="hm-today" data-sit="${sit.id}">이 상황으로 연습하기</button></div>`;
+}
+document.addEventListener('click', e => { const b = e.target.closest('#hm-today'); if (!b) return; prSel.value = b.dataset.sit; renderPracticeCard(); showPage('practice'); setPracticeSub('do'); });
+async function renderTeacherDash() {
+    const box = $('#hm-dash');
+    if (!myCode() || !myPw()) {
+        box.innerHTML = `<h3 style="margin:0 0 4px">우리 반 현황</h3><p class="muted" style="margin:0 0 8px">학급 코드로 들어오면 학생 제출 현황이 그래프로 보여요. 지금은 학급 없이 둘러보는 중이에요.</p><button class="btn" data-go="myclass">내 학급 열기</button>`; return;
+    }
+    box.innerHTML = `<div class="dash-title"><h3 style="margin:0">우리 반 현황 <span class="muted" style="font-weight:500">· 학급 코드 ${fmtCode(myCode())}</span></h3><div class="row"><button class="btn ghost small" id="hm-copy">코드 복사</button><button class="btn ghost small" id="hm-refresh">새로고침</button></div></div><div class="muted" id="hm-load">불러오는 중…</div>`;
+    try {
+        const j = await proxyPost({ action: 'read', code: myCode(), password: myPw() });
+        if (!j.ok) throw new Error(j.error || 'SERVER');
+        sbRows = j.rows || []; drawTeacherDash(j.total || 0);
+    } catch (e) { const l = $('#hm-load'); if (l) l.textContent = srvErr(e); }
+}
+function drawTeacherDash(total) {
+    const rows = sbRows, passKey = '자동점검 통과(6칸 중)', box = $('#hm-dash');
+    const nums = {}, dist = [0, 0, 0, 0, 0, 0, 0]; let sum = 0, cnt = 0;
+    rows.forEach(r => { nums[r['번호']] = (nums[r['번호']] || 0) + 1; const v = parseInt(r[passKey], 10); if (v >= 0 && v <= 6) { dist[v]++; sum += v; cnt++; } });
+    const keys = Object.keys(nums).sort((a, b) => a - b), mxN = Math.max(1, ...Object.values(nums)), mxD = Math.max(1, ...dist);
+    const head = box.querySelector('.dash-title').outerHTML;
+    if (!rows.length) { box.innerHTML = head + `<div class="muted">아직 제출된 기록이 없어요. 학생이 [선생님께 제출]을 누르면 여기에 나타나요.<br>학생에게 학급 코드 <b>${fmtCode(myCode())}</b>를 알려 주세요.</div>`; return; }
+    box.innerHTML = head +
+        `<div class="tiles"><div class="tile"><small>전체 제출</small><b>${total}<em>건</em></b></div><div class="tile"><small>제출한 학생 수</small><b>${keys.length}<em>명</em></b></div><div class="tile"><small>평균 통과 칸</small><b>${cnt ? (sum / cnt).toFixed(1) : '-'}<em>/ 6</em></b></div></div>
+        <div class="grid2"><div><div class="muted">통과한 칸 수별 제출 수</div><div class="bars">${dist.map((v, i) => `<div class="col"><span>${v}</span><i class="${i === 6 ? 'hi' : ''}" style="height:${Math.max(2, v / mxD * 90)}px"></i>${i}칸</div>`).join('')}</div></div>
+        <div><div class="muted" style="margin-bottom:2px">번호별 제출 수</div><div style="max-height:130px;overflow:auto">${keys.map(k => `<div class="hbar"><span>${esc(k)}번</span><div><i style="width:${nums[k] / mxN * 100}%"></i></div><b>${nums[k]}</b></div>`).join('')}</div></div></div>
+        <hr><div class="muted" style="margin-bottom:4px">최근 제출</div>` +
+        rows.slice(0, 5).map(r => `<div class="fbline tip" style="display:block"><b>${esc(r['번호'])}번</b> · ${esc(r['상황'])} <span class="tag">${esc(r[passKey])}/6</span></div>`).join('') +
+        `<div class="row" style="margin-top:8px"><button class="btn ghost small" data-go="myclass">제출함 전체 보기</button></div>`;
+}
+document.addEventListener('click', e => {
+    if (e.target.closest('#hm-refresh')) renderTeacherDash();
+    if (e.target.closest('#hm-copy')) { navigator.clipboard && navigator.clipboard.writeText(myCode()).then(() => toast('학급 코드를 복사했어요'), () => toast('코드: ' + myCode())); }
+    const g = e.target.closest('#hm-dash [data-go]'); if (g) showPage(g.dataset.go);
+});
 
 /* =====================================================================
    12. 시작
@@ -1925,8 +2433,11 @@ fillSitSelects();
 renderPracticeCard();
 setAgentRole('student');
 renderCards();
+applyRole(); enRefresh();
 const initial = (location.hash || '').replace('#', '');
-if (['roleplay', 'practice', 'help', 'agent', 'feedback', 'admin'].includes(initial)) showPage(initial);
+if (role()) showPage(['home', 'roleplay', 'practice', 'help', 'agent', 'myclass', 'feedback', 'admin'].includes(initial) ? initial : 'home');
+else showPage('entry');
+if (!store.get('iMsg.tutDone', '') && role()) tutOpen(0);
 initFirebase().then(() => { ['student', 'teacher'].forEach(r => { if (chat[r].length <= 1) initChat(r); }); renderChat(); });
 </script>
 </body>
