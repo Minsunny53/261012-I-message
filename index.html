@@ -244,6 +244,7 @@
         .ai-step { display: flex; gap: 8px; align-items: flex-start; padding: 3px 0; } .ai-step i { font-style: normal; flex: none; min-width: 24px; height: 24px; border-radius: 50%; background: var(--cc); color: #fff; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; font-size: .85rem; }
         .ai-say { background: var(--surface); border: 1px dashed var(--cc); border-radius: 10px; padding: 6px 10px; margin: 4px 0; }
         .ai-qa { margin: 6px 0; } .ai-qa .inp { margin-top: 4px; }
+        .ai-ask { margin-top: 8px; padding: 8px 12px; border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 10px; font-weight: 700; }
         .ai-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); }
         .ai-actions .lbl { flex: 0 0 100%; font-size: .85rem; color: var(--muted); font-weight: 700; }
         .typing { opacity: .85; }
@@ -740,7 +741,7 @@
             </div>
 
             <div id="fbp-lock" class="panel" style="display:none">
-                <p style="margin:0 0 8px">피드백 지침은 관리자(교사)만 수정할 수 있어요.</p>
+                <p style="margin:0 0 8px">피드백 지침은 선생님만 수정할 수 있어요. [내 학급]에서 학급 코드와 비밀번호로 들어오거나 관리자로 로그인해 주세요.</p>
                 <button class="btn" id="fbp-login">관리자 로그인하러 가기</button>
             </div>
 
@@ -1130,7 +1131,7 @@ const plainTitle = s => s.title.replace(/\n/g, ' ');
 /* =====================================================================
    2. 기본 에이전트 가이드 (관리자 페이지에서 언제든 수정 가능)
    ===================================================================== */
-const GUIDE_VER = 3;   // 기본 가이드를 크게 고칠 때 올려요. 관리자 화면에서 옛 저장본과 구분해요.
+const GUIDE_VER = 4;   // 기본 가이드를 크게 고칠 때 올려요. 관리자 화면에서 옛 저장본과 구분해요.
 const DEFAULT_GUIDE = {
     commonRules:
 `[공통 규칙]
@@ -1156,7 +1157,8 @@ const DEFAULT_GUIDE = {
 1. 완성 문장을 대신 써 주지 않는다. "대신 써 줘"라고 해도 부드럽게 거절하고 작은 질문이나 힌트로 되돌린다.
 2. 답은 1~3문장, 질문은 한 번에 딱 1개. 쉬운 낱말로 쓴다.
 3. 순서: ①무슨 일이 있었는지(보고 들은 것) → ②그때 나에게 생긴 일·몸의 느낌 → ③감정 이름(막히면 후보 3~4개 중 고르기) → ④바라는 점 → ⑤"~해서 나는 ~해. ~해 주면 좋겠어"로 한 번에 말해 보기 → ⑥상대 입장에서 인정·사과·약속 말해 보기.
-4. 먼저 학생 말에서 잘한 점을 구체적으로 짚어 칭찬하고, 그다음 질문한다. ("'답답해'라고 마음을 정확히 말했네!")
+4. 먼저 학생이 느꼈을 마음을 한 문장으로 알아주고(공감: "그런 일이 있었구나, 속상했겠다.") 누구의 잘못인지는 판단하지 않는다. 그다음 학생 말에서 잘한 점을 구체적으로 짚어 칭찬하고, 마지막에 질문한다. ("'답답해'라고 마음을 정확히 말했네!") 이후 대화에서는 공감을 반복하지 않고 칭찬과 질문 중심으로 이어 간다.
+  · 나 전달법과 관계 회복이 목표다: 말하기가 끝나면 "이 말을 들으면 친구는 어떤 기분일까?", "다시 편안하게 지내려면 어떤 말이 도움이 될까?"를 한 번 물어본다.
 5. 학생이 막히는 곳에 맞춰 돕는다.
   · 탓하는 말("너 때문에", "쟤가 나빠")이 나오면 혼내지 말고 "그랬구나. 그때 네 마음은 어땠어?"로 '나의 마음'으로 되돌린다. 평가가 나오면 "친구가 뭘 했는지 보고 들은 것만 말해 볼까?"
   · 감정을 못 찾으면 "그때 몸이 어땠어? (가슴이 두근두근, 얼굴이 뜨거움)"를 먼저 묻고 감정 낱말 3~4개 중 고르게 한다. "몰라/그냥"이면 "괜찮아, 천천히 같이 찾아보자."
@@ -1325,10 +1327,11 @@ function friendlyError(e) {
     return `AI가 잠시 대답하지 못했어요. 다시 시도해 주세요. (오류: ${m.slice(0, 40)})`;
 }
 const charRule = () => { const c = curChars(); return `[등장 캐릭터]\n저학년 학생도 이름으로 알아볼 수 있도록, 입력의 알파벳(A, B, C…)은 이미 캐릭터 이름으로 바뀌어 전달된다. 인물은 반드시 그 이름으로 부른다. 이름이 따로 없으면 기본으로 말하는 친구는 '${c.a.name}', 대답하는 친구는 '${c.b.name}'로 부른다. (캐릭터: ${chars.slice(0, 10).map(x => x.name).join(', ')} 등)`; };
-const buildSystem = kind => [state.guide.commonRules,
+const classNote = () => { const e = (activeFb().emphasis || '').trim(); return e ? `[우리 반 담임 중점 — 답변에 자연스럽게 반영한다]\n${e}` : ''; };
+const buildSystem = kind => [state.guide.commonRules, kind !== 'helper' ? classNote() : '',
     kind === 'student' ? state.guide.studentGuide : kind === 'teacher' ? state.guide.teacherGuide : state.guide.helperGuide + '\n\n' + HELPER_FORMAT,
     charRule(),
-    FIXED_SAFETY].join('\n\n---\n\n');
+    FIXED_SAFETY].filter(Boolean).join('\n\n---\n\n');
 
 /* =====================================================================
    5. 탓하기 / 감정 점검 (나 전달법 규칙)
@@ -1403,7 +1406,7 @@ function rpCardHtml(i) {
         <div class="card-container" onclick="this.classList.toggle('flipped')">
             <div class="card-face rp-front">
                 <span class="rp-badge">현재 상황</span>
-                <div class="rp-acts"><button class="rp-redo" data-copy-card="${i}" title="팀보드·웨일 클래스에 붙여넣기용 텍스트 복사">팀보드 복사</button></div>
+                <div class="rp-acts"><button class="rp-redo" data-practice="${i}" title="이 상황으로 바로 연습하러 가기">✏️ 연습</button><button class="rp-redo" data-copy-card="${i}" title="팀보드·웨일 클래스에 붙여넣기용 텍스트 복사">팀보드 복사</button></div>
                 <div class="rp-emoji">${sit.emoji}</div>
                 <h3 class="rp-title" style="${sit.title.length > 40 ? 'font-size:clamp(1.1rem,2.4vw,1.9rem)' : ''}">${formattedTitle}</h3>
                 <div class="rp-who">${esc(A.emoji)} ${esc(A.name)} ↔ ${esc(B.emoji)} ${esc(B.name)}</div>
@@ -1423,7 +1426,7 @@ function rpCardHtml(i) {
         <div class="card-container" onclick="this.classList.toggle('flipped')">
             <div class="card-face rp-front">
                 <span class="rp-badge">${rp.allSame ? '전체 함께' : (i + 1) + '모둠'}</span>
-                <div class="rp-acts"><button class="rp-redo" data-copy-card="${i}" title="팀보드·웨일 클래스에 붙여넣기용 텍스트 복사">팀보드 복사</button><button class="rp-redo" data-redo="${i}" title="이 카드만 다시 뽑기">다시 뽑기</button></div>
+                <div class="rp-acts"><button class="rp-redo" data-practice="${i}" title="이 상황으로 바로 연습하러 가기">✏️ 연습</button><button class="rp-redo" data-copy-card="${i}" title="팀보드·웨일 클래스에 붙여넣기용 텍스트 복사">팀보드 복사</button><button class="rp-redo" data-redo="${i}" title="이 카드만 다시 뽑기">다시 뽑기</button></div>
                 <div class="rp-emoji">${sit.emoji}</div>
                 <h3 class="rp-title">${formattedTitle}</h3>
                 <div class="rp-who">${esc(A.emoji)} ${esc(A.name)} ↔ ${esc(B.emoji)} ${esc(B.name)}</div>
@@ -1469,6 +1472,12 @@ function cardText(i) {
 }
 async function copyText(text, okMsg) { try { await navigator.clipboard.writeText(text); toast(okMsg || '복사했어요. 팀보드나 웨일 클래스에 붙여넣어 보세요'); } catch (e) { prompt('아래 내용을 복사하세요', text); } }
 gridContainer.addEventListener('click', e => {
+    const pc = e.target.closest('[data-practice]');
+    if (pc) {
+        e.stopPropagation(); const sit = rp.picks[+pc.dataset.practice];
+        if (sit.blank) { prSel.value = 'tmp'; $('#pr-custom').value = sit.title.slice(0, 300); } else { sitQ.pr = ''; $('#pr-q').value = ''; fillSitSelects(); prSel.value = String(sit.id); }
+        renderPracticeCard(); showPage('practice'); setPracticeSub('do'); toast('이 상황으로 연습해 봐요!'); return;
+    }
     const cp = e.target.closest('[data-copy-card]'); if (cp) { e.stopPropagation(); copyText(cardText(+cp.dataset.copyCard)); return; }
     const bt = e.target.closest('[data-redo]'); if (!bt) return;
     e.stopPropagation();
@@ -1656,8 +1665,9 @@ const DEFAULT_FB = {
     }
 };
 const FB_KEY = 'iMsg.myFb';
-let fbMine = null;
+let fbMine = null, fbClass = null;   // fbMine: 이 기기에서 고친 지침 / fbClass: 우리 반 서버에 저장된 선생님 지침(학생 기기에 자동 적용)
 try { const r = store.get(FB_KEY); if (r) fbMine = JSON.parse(r); } catch (e) { fbMine = null; }
+try { const r = store.get('iMsg.fbClass'); if (r) fbClass = JSON.parse(r); } catch (e) { fbClass = null; }
 function mergeFb(o) {
     const base = JSON.parse(JSON.stringify(DEFAULT_FB));
     if (!o || typeof o !== 'object') return base;
@@ -1671,7 +1681,17 @@ function mergeFb(o) {
     });
     return base;
 }
-const activeFb = () => mergeFb(fbMine);
+const activeFb = () => mergeFb(fbMine || fbClass);
+async function fetchClassFb() {   // 우리 반 선생님이 저장해 둔 피드백 지침을 받아 와요 (학생·교사 공통)
+    try {
+        const code = getClassCode() || (typeof myCode === 'function' ? myCode() : ''); if (!proxyUrl() || !code) return;
+        const j = await proxyPost({ action: 'getFb', code });
+        if (!j || !j.ok) return;
+        fbClass = j.fb && typeof j.fb === 'object' ? j.fb : null;
+        store.set('iMsg.fbClass', fbClass ? JSON.stringify(fbClass) : '');
+        if (typeof fbBadge === 'function') fbBadge();
+    } catch (e) {}
+}
 const wl = s => (s || '').split(/[,\n]/).map(x => x.trim()).filter(Boolean);
 const hits = (text, listStr) => { const n = text.replace(/\s+/g, ''); return wl(listStr).filter(w => n.includes(w.replace(/\s+/g, ''))); };
 
@@ -1756,7 +1776,7 @@ async function aiFeedback() {
     const fb = activeFb(), res = evalFeedback(fb, v), s = curSit();
     const box = $('#pr-ai'); box.style.display = 'block'; box.innerHTML = '<div class="muted">AI 선생님이 읽고 있어요…</div>';
     const sys = [state.guide.commonRules,
-        `[피드백 도우미 역할]\n너는 초등학생이 쓴 나 전달법(행감바)과 인사약을 읽고 피드백하는 AI 선생님이다.\n- 정답 문장을 대신 써 주지 않는다. 질문과 힌트로 학생이 스스로 고치게 한다.\n- 먼저 학생이 잘한 점 1가지를 구체적으로 칭찬한다.\n- 보완할 칸은 최대 2개만 골라, 칸마다 질문 또는 힌트 1개씩 준다.\n- 탓하는 표현이 있으면 비난 없이 '나의 상황·감정'을 말하도록 되묻는다.\n- 쉬운 말로 4~6문장.\n- 자동 점검에서 걸린 내용은 참고만 하고 그대로 반복하지 않는다.`,
+        `[피드백 도우미 역할]\n너는 초등학생이 쓴 나 전달법(행감바)과 인사약을 읽고 피드백하는 AI 선생님이다. 평가자가 아니라, 학생의 마음 편에 먼저 서 주는 따뜻한 조력자이다.\n[출력 형식] 아래 네 소제목을 【 】로 감싸 한 줄에 쓰고 그 아래 내용을 쓴다. 전체 5~7문장, 쉬운 말.\n【마음 알아주기】 학생이 이 상황에서 느꼈을 마음을 한 문장으로 먼저 알아주고 공감한다. (\"그런 일이 있었구나, 많이 속상했겠다.\") 누구의 잘못인지 판단하지 않는다.\n【잘한 점】 학생이 쓴 글에서 잘한 점 1가지를 구체적으로 칭찬한다.\n【생각해 볼 점】 보완할 칸은 최대 2개만 골라, 칸마다 정답 대신 질문 또는 힌트 1개씩 준다. 탓하는 표현이 있으면 비난 없이 '나의 상황·감정'을 말하도록 되묻는다. 자동 점검에서 걸린 내용은 참고만 하고 그대로 반복하지 않는다.\n【이어 말해 볼까요】 이 말이 친구에게 어떻게 들릴지, 그리고 '친구와의 관계를 다시 편안하게 만들려면' 어떤 말이 도움이 될지 묻는 질문 1개로 끝낸다.\n- 정답 문장을 대신 써 주지 않는다.`,
         fbPromptText(fb), FIXED_SAFETY].join('\n\n---\n\n');
     const found = STEP_META.map(([k, n]) => `${n}: ${res[k].items.filter(i => i.t === 'warn').map(i => i.m).join(' / ') || '통과'}`).join('\n');
     const cc = curChars();
@@ -1765,9 +1785,9 @@ async function aiFeedback() {
     try {
         const out = cleanMd(await callGemini({ system: sys, history: [{ role: 'user', text: msg }], kind: 'fb' }));
         stop();
-        box.innerHTML = `<h3>AI 선생님 피드백</h3><div class="preview caret" id="pr-ai-txt" style="min-height:0"></div>`;
-        const el = $('#pr-ai-txt');
-        typeOut(out, (t, done) => { el.innerHTML = fmt(t); el.classList.toggle('caret', !done); });
+        box.innerHTML = `<h3>AI 선생님 피드백</h3><div id="pr-ai-txt" class="caret"></div>`;
+        const el = $('#pr-ai-txt'), tmp = { text: '' };
+        typeOut(out, (t, done) => { tmp.text = t; el.innerHTML = hasBlocks(t) ? renderTeacherBlocks(tmp) : `<div class="preview" style="min-height:0">${fmt(t)}</div>`; el.classList.toggle('caret', !done); });
     } catch (e) { stop(); box.innerHTML = `<div class="fb warn">${esc(friendlyError(e))}</div>`; }
 }
 function showModel() {
@@ -1976,16 +1996,17 @@ function formToFb() {
     STEP_META.forEach(([k]) => { o.steps[k] = {}; ['criteria', 'okMsg', 'fixMsg'].forEach(f => o.steps[k][f] = $(`#fbs-${k}-${f}`).value); });
     return o;
 }
-function fbBadge() { $('#fbp-badge').textContent = fbMine ? '지금 적용: 나의 지침' : '지금 적용: 기본 지침'; }
+function fbBadge() { $('#fbp-badge').textContent = fbMine ? '지금 적용: 나의 지침' : fbClass ? '지금 적용: 우리 반 선생님 지침' : '지금 적용: 기본 지침'; }
+const canEditFb = () => isAdminNow() || !!(myCode() && myPw());
 function renderFbPage() {
     fbBadge();
-    const ok = isAdminNow();
+    const ok = canEditFb();
     $('#fbp-lock').style.display = ok ? 'none' : 'block'; $('#fbp-main').style.display = ok ? 'flex' : 'none';
     if (!ok) return;
     buildFbForm(); fbToForm(activeFb());
 }
 async function saveFbMine() {
-    if (!isAdminNow()) return;
+    if (!canEditFb()) return;
     fbMine = mergeFb(formToFb());
     store.set(FB_KEY, JSON.stringify(fbMine));
     let where = '이 기기';
@@ -1993,13 +2014,18 @@ async function saveFbMine() {
         try { const { F, db } = state.fb; await F.setDoc(F.doc(db, ...GUIDE_DOC), { feedbackGuide: fbMine, updatedAt: F.serverTimestamp(), updatedBy: state.adminUser }, { merge: true }); where = 'Firebase + 이 기기'; }
         catch (e) { where = '이 기기 (Firebase 저장 실패)'; }
     }
-    fbBadge(); $('#fbp-msg').textContent = `나의 지침을 ${where}에 저장했어요. 연습 화면에 바로 적용돼요. (${new Date().toLocaleTimeString('ko-KR')})`; toast('저장했어요');
+    if (myCode() && myPw() && proxyUrl()) {   // 우리 반 서버에도 저장 → 학생 기기에 자동 적용
+        try { const j = await proxyPost({ action: 'saveFb', code: myCode(), password: myPw(), fb: fbMine }); if (j.ok) { where += ' + 우리 반 서버(학생 기기에 자동 적용)'; fbClass = fbMine; store.set('iMsg.fbClass', JSON.stringify(fbMine)); } else where += ' (서버 저장 실패: ' + (j.error || '') + ')'; }
+        catch (e) { where += ' (서버 저장 실패: 인터넷·서버 확인)'; }
+    }
+    fbBadge(); $('#fbp-msg').textContent = `나의 지침을 ${where}에 저장했어요. 연습 화면과 AI 선생님에 바로 적용돼요. (${new Date().toLocaleTimeString('ko-KR')})`; toast('저장했어요');
 }
 $('#fbp-save').onclick = $('#fbp-save2').onclick = saveFbMine;
 $('#fbp-load').onclick = () => { if (confirm('지금 편집 중인 내용이 기본 지침으로 바뀌어요. (저장 전까지는 적용되지 않아요) 불러올까요?')) { fbToForm(mergeFb(null)); $('#fbp-msg').textContent = '기본 지침을 불러왔어요. 고친 뒤 "나의 지침 저장"을 눌러 주세요.'; } };
 $('#fbp-reset').onclick = async () => {
     if (!confirm('나의 지침을 지우고 기본 지침으로 돌아갈까요?')) return;
     fbMine = null; store.del(FB_KEY);
+    if (myCode() && myPw() && proxyUrl()) { try { await proxyPost({ action: 'saveFb', code: myCode(), password: myPw(), fb: null }); fbClass = null; store.set('iMsg.fbClass', ''); } catch (e) {} }
     if (state.fb && state.adminUser) { try { const { F, db } = state.fb; await F.setDoc(F.doc(db, ...GUIDE_DOC), { feedbackGuide: F.deleteField() }, { merge: true }); } catch (e) {} }
     fbToForm(mergeFb(null)); fbBadge(); $('#fbp-msg').textContent = '기본 지침으로 되돌렸어요.';
 };
@@ -2018,16 +2044,24 @@ $('#fbp-login').onclick = () => showPage('admin');
 /* =====================================================================
    9. 실제 상황을 도와줘 (AI 추천 / 키 없으면 예시 기반 추천)
    ===================================================================== */
+const SIT_KW = {
+    1: '연필 지우개 필통 학용품 가져 빌려 돌려 허락 물건', 2: '부딪 치고 뛰어 달리 사과 아프', 3: '그림 놀리 놀림 그려 미술', 4: '새치기 급식 줄 순서 차례 밀려',
+    5: '책 읽는데 읽고 말을걸 방해 집중 독서', 6: '블록 무너 망가 쌓 레고 만든', 7: '안놀 같이놀 따돌 혼자 외로 끼워', 8: '교실 뛰 책상 흔들 떨어',
+    9: '크레파스 혼자 나눠 색연필 독차지 색칠', 10: '별명 이름 놀리 부르 이상한', 11: '신발 밟 운동화', 12: '쓰레기 버리 휴지 지저분',
+    13: '등을 수업 장난 건드 톡톡', 14: '미끄럼틀 놀이터 그네 위험 밀', 15: '비밀 말했 소문 퍼뜨 약속', 16: '끼어 말을끊 말하는데 중간',
+    17: '비웃 잘못읽 웃었 실수 틀렸', 18: '넘어 자리 좁 침범 선을', 19: '화장실 물 튀 손씻 젖', 20: '청소 놀고 구역 혼자'
+};
+function scoreSit(s, text) {
+    const input = bigrams(text), ref = bigrams(plainTitle(s) + ' ' + s.my_action), flat = String(text).replace(/\s+/g, '');
+    let sc = 0; input.forEach(g => { if (ref.has(g)) sc++; });
+    (SIT_KW[s.id] || '').split(' ').forEach(k => { if (k && flat.includes(k)) sc += 4; });
+    return sc;
+}
 function bigrams(s) { const t = s.replace(/[^가-힣a-zA-Z0-9]/g, ''); const set = new Set(); for (let i = 0; i < t.length - 1; i++) set.add(t.slice(i, i + 2)); return set; }
 function localRecommendBase(text) {
-    const input = bigrams(text);
     let best = null, bestScore = 0;
-    situations.forEach(s => {
-        const ref = bigrams(plainTitle(s) + ' ' + s.my_action);
-        let sc = 0; input.forEach(g => { if (ref.has(g)) sc++; });
-        if (sc > bestScore) { bestScore = sc; best = s; }
-    });
-    if (best && bestScore >= 3) {
+    situations.forEach(s => { const sc = scoreSit(s, text); if (sc > bestScore) { bestScore = sc; best = s; } });
+    if (best && bestScore >= 4) {
         return { situation: best.my_action, feeling: '나는 ' + best.my_emotion, wish: best.my_want, acknowledge: best.friend_ack, apology: best.friend_apology, promise: best.friend_promise,
                  tip: `비슷한 상황 "${sitTitle(best)}"의 예시예요. 내 일에 맞게 낱말을 바꿔서 내 말로 만들어 봐요.`, emotion_words: ['속상해', '답답해', '서운해'], local: true };
     }
@@ -2082,7 +2116,8 @@ function renderHelp(r) {
             <h3>이 상황으로 이어서 하기</h3>
             <div class="row">
                 <button class="btn" data-next="chat">💬 AI 선생님과 이야기하며 정리하기</button>
-                <button class="btn ghost" data-next="practice">✏️ 연습 화면에서 직접 써 보기</button>
+                <button class="btn ghost" data-next="similar">📚 비슷한 예시 상황으로 연습</button>
+                <button class="btn ghost" data-next="practice">✏️ 내 상황 그대로 연습</button>
                 <button class="btn ghost" data-next="teacher" data-teacher>👩‍🏫 지도 방법 상담하기 (교사용)</button>
             </div>
         </div>`;
@@ -2093,7 +2128,8 @@ let hpLast = '';
 function goNext(kind) {
     const raw = hpLast || $('#hp-input').value.trim(); if (!raw) return;
     const text = convertLetters(raw);
-    if (kind === 'practice') {
+    if (kind === 'similar') goSimilar(text);
+    else if (kind === 'practice') {
         prSel.value = 'tmp'; $('#pr-custom').value = text.slice(0, 300); renderPracticeCard(); showPage('practice'); setPracticeSub('do'); toast('연습 화면으로 가져왔어요. 직접 써 보세요!');
     } else {
         showPage('agent'); const role = kind === 'teacher' ? 'teacher' : 'student'; setAgentRole(role); initChat(role); renderChat();
@@ -2142,6 +2178,7 @@ const chat = { student: [], teacher: [] };
 let agRole = 'student', agBusy = false;
 
 const SEC_STYLE = [
+    [/마음/, '#db2777', '💗'], [/잘한/, '#059669', '⭐'], [/생각해/, '#d97706', '🤔'], [/이어|관계/, '#2563eb', '🌱'],
     [/확인/, '#d97706', '❓'], [/상황/, '#2563eb', '🔎'], [/지도|순서/, '#059669', '🧭'], [/학생|질문/, '#7c3aed', '💬'],
     [/교사|말/, '#ea580c', '🗣️'], [/팁|유형|어려움/, '#0d9488', '💡'], [/주의|안전|절차/, '#dc2626', '⚠️'], [/수업/, '#4f46e5', '📚'], [/후속|활동/, '#db2777', '🚀']
 ];
@@ -2154,7 +2191,7 @@ function parseSections(t) {
     return secs;
 }
 function hasBlocks(t) { return /【.+?】/.test(t) || /^\s*\*\*[^*]{2,22}\*\*\s*$/m.test(cleanMd(t)); }
-function renderTeacherBlocks(m) {
+function renderTeacherBlocks(m) {   // 교사 답변·학생 피드백 공용
     const secs = parseSections(m.text); m.qa = m.qa || {};
     let h = '', qi = 0;
     secs.forEach(sec => {
@@ -2177,6 +2214,14 @@ function renderTeacherBlocks(m) {
     });
     return h;
 }
+function fmtStudentAi(text) {
+    const t = cleanMd(text), q = t.lastIndexOf('?');
+    if (q < 0) return fmt(t);
+    let st = Math.max(t.lastIndexOf('. ', q), t.lastIndexOf('! ', q), t.lastIndexOf('\n', q), t.lastIndexOf('요. ', q));
+    st = st < 0 ? 0 : st + 1;
+    const before = t.slice(0, st).trim(), ask = t.slice(st, q + 1).trim(), after = t.slice(q + 1).trim();
+    return (before ? fmt(before) : '') + `<div class="ai-ask">💬 ${fmt(ask)}</div>` + (after ? fmt(after) : '');
+}
 function actionRowHtml() {
     return `<div class="ai-actions"><span class="lbl">이어서 해 보기</span>
         <button class="btn small" data-act="sheet">🖨️ 갈등 돌아보기 활동지 (인쇄·PDF)</button>
@@ -2186,8 +2231,8 @@ function actionRowHtml() {
 }
 const teacherSituation = () => { const m = chat.teacher.find(x => x.role === 'me' && !/^확인 질문에 답/.test(x.text)); return m ? m.text : ''; };
 function bestSituation(text) {
-    const input = bigrams(text); let best = null, bs = 0;
-    situations.forEach(s => { const ref = bigrams(plainTitle(s) + ' ' + s.my_action); let sc = 0; input.forEach(g => { if (ref.has(g)) sc++; }); if (sc > bs) { bs = sc; best = s; } });
+    let best = null, bs = 0;
+    situations.forEach(s => { const sc = scoreSit(s, text); if (sc > bs) { bs = sc; best = s; } });
     return bs >= 4 ? best : null;
 }
 function firstMsg(role) { return role === 'student' ? state.guide.studentFirst : state.guide.teacherFirst; }
@@ -2201,7 +2246,7 @@ function renderChat() {
         const blocks = m.role === 'ai' && agRole === 'teacher' && !m.typing && !m.first && hasBlocks(m.text);
         if (blocks) d.classList.add('wide');
         const lastAi = [...chat[agRole]].reverse().find(x => x.role === 'ai');
-        d.innerHTML = (m.html != null ? m.html : blocks ? renderTeacherBlocks(m) + (m === lastAi && !m.caret ? actionRowHtml() : '') : fmt(m.role === 'ai' ? cleanMd(m.text) : m.text)) + (m.hint ? `<div style="font-size:.8rem;opacity:.85;margin-top:4px">${esc(m.hint)}</div>` : '');
+        d.innerHTML = (m.html != null ? m.html : blocks ? renderTeacherBlocks(m) + (m === lastAi && !m.caret ? actionRowHtml() : '') : (m.role === 'ai' && agRole === 'student' && !m.first && !m.caret ? fmtStudentAi(m.text) : fmt(m.role === 'ai' ? cleanMd(m.text) : m.text))) + (m.hint ? `<div style="font-size:.8rem;opacity:.85;margin-top:4px">${esc(m.hint)}</div>` : '');
         box.appendChild(d);
     });
     box.scrollTop = box.scrollHeight;
@@ -2214,8 +2259,8 @@ function setAgentRole(role) {
     $('#ag-start-row').style.display = stu ? 'flex' : 'none';
     $('#ag-chars-row').style.display = stu ? 'flex' : 'none';
     $('#ag-grid').style.gridTemplateColumns = stu ? '' : '1fr';
-    $('#ag-desc').textContent = stu ? '질문에 대답하면서 내 마음을 내 말로 만들어 봐요. AI 선생님은 답을 알려주지 않고 질문으로 도와줘요.'
-                                     : '학급에서 있었던 상황을 적으면, 학생 지도 순서와 학생에게 건넬 질문·말 예시를 정리해 드려요. (학생 이름 대신 A, B, C로 쓰면 캐릭터 이름으로 자동으로 바뀌어요)';
+    $('#ag-desc').textContent = stu ? '질문에 대답하면서 내 마음을 내 말로 만들어 봐요. AI 선생님은 답을 알려주지 않고 질문으로 도와줘요. (나 전달법 수업 지도안을 바탕으로 만든 질문형 AI)'
+                                     : '학급에서 있었던 상황을 적으면, 학생 지도 순서와 학생에게 건넬 질문·말 예시를 정리해 드려요. (학생 이름 대신 A, B, C로 쓰면 캐릭터 이름으로 자동으로 바뀌어요) [피드백 지침]에 적은 우리 반 중점도 반영돼요.';
     $('#chat-in').placeholder = stu ? '여기에 내 생각을 써 보세요' : '예) 쉬는 시간에 A가 B의 블록을 무너뜨려 B가 울고 있어요…';
     $('#ag-note').textContent = stu ? '대화는 저장되지 않아요. 이름은 쓰지 않아요.' : '대화는 저장되지 않아요. 학생 개인정보는 기호(A, B)로 써 주세요.';
     if (!chat[role].length) initChat(role);
@@ -2255,16 +2300,17 @@ async function sendChat(text) {
 }
 $('#chat-send').onclick = () => { const v = $('#chat-in').value; $('#chat-in').value = ''; sendChat(v); };
 $('#chat-in').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); $('#chat-send').click(); } });
+function goSimilar(text) {
+    const best = bestSituation(text);
+    sitQ.pr = ''; $('#pr-q').value = ''; fillSitSelects();
+    if (best) { prSel.value = String(best.id); toast('비슷한 상황을 골라 두었어요: ' + plainTitle(best)); }
+    else { prSel.value = 'tmp'; $('#pr-custom').value = text.slice(0, 300); toast('비슷한 예시가 없어 내 상황을 연습 칸에 넣어 두었어요'); }
+    renderPracticeCard(); showPage('practice'); setPracticeSub('do');
+}
 function doAct(act) {
     const text = teacherSituation(); if (!text) { toast('상황을 먼저 적어 주세요'); return; }
     if (act === 'help') { $('#hp-input').value = text; updateHpConv(); showPage('help'); $('#hp-go').click(); }
-    else if (act === 'similar') {
-        const best = bestSituation(text);
-        sitQ.pr = ''; $('#pr-q').value = ''; fillSitSelects();
-        if (best) { prSel.value = String(best.id); toast('비슷한 예시 상황을 골라 두었어요'); }
-        else { prSel.value = 'tmp'; $('#pr-custom').value = text.slice(0, 300); toast('내 상황을 연습 칸에 넣어 두었어요'); }
-        renderPracticeCard(); showPage('practice'); setPracticeSub('do');
-    }
+    else if (act === 'similar') goSimilar(text);
     else if (act === 'role') { rpCustom = text.slice(0, 300); modeSelect.value = 'all'; renderCards(); showPage('roleplay'); toast('현재 상황으로 전체 역할놀이 카드를 만들었어요'); }
     else if (act === 'sheet') {
         const d = new Date(), date = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
@@ -2429,7 +2475,7 @@ $('#conn-save').onclick = () => {
     if (no && !/^\d{1,2}$/.test(no)) { toast('번호는 숫자로 써 주세요 (예: 7)'); return; }
     const cc = $('#conn-code').value.replace(/\D/g, '');
     if (cc && cc.length !== 8) { toast('학급 코드는 숫자 8자리예요'); return; }
-    store.set('iMsg.classCode', cc); store.set('iMsg.studentNo', no);
+    store.set('iMsg.classCode', cc); store.set('iMsg.studentNo', no); fetchClassFb();
     updateConnBtn(); $('#conn-overlay').style.display = 'none'; toast('저장했어요');
 };
 async function submitRecord(v, sitText) {
@@ -2518,7 +2564,8 @@ function renderMyClass() {
 }
 function mcEnter(code, pw, label) {
     store.set('iMsg.myCode', code); store.set('iMsg.myPw', pw); store.set('iMsg.myLabel', label || '');
-    if (!getClassCode()) store.set('iMsg.classCode', code);   // 이 기기에서 AI 선생님도 바로 쓸 수 있게
+    if (!getClassCode()) store.set('iMsg.classCode', code);
+    fetchClassFb();   // 이 기기에서 AI 선생님도 바로 쓸 수 있게
     sbRows = []; renderSb(); $('#sb-msg').textContent = ''; renderMyClass();
 }
 $('#mc-url-save').onclick = () => { const u = $('#mc-url').value.trim(); if (u) store.set('iMsg.proxyLocal', u); renderMyClass(); toast('저장했어요'); };
@@ -2732,7 +2779,7 @@ $('#en-student-go').onclick = async () => {
     try {
         const j = await proxyPost({ action: 'checkClass', code });
         if (!j.ok) throw new Error(j.error === 'BAD_CODE' || j.error === 'NO_CLASS' ? 'NO_CLASS' : (j.error || 'SERVER'));
-        store.set('iMsg.classCode', code); store.set('iMsg.studentNo', no); enMsg(''); askPriv(() => enterApp('student'));
+        store.set('iMsg.classCode', code); store.set('iMsg.studentNo', no); fetchClassFb(); enMsg(''); askPriv(() => enterApp('student'));
     } catch (e) { enMsg(srvErr(e) + (/NETWORK|NO_PROXY/.test(e.message) ? ' (아래 [코드 없이 둘러보기]로 연습은 할 수 있어요)' : '')); }
 };
 $('#en-login-go').onclick = async () => { const ok = await tcLogin($('#en-tcode').value, $('#en-tpw').value, { set textContent(v) { enMsg(v); } }); if (ok) { $('#en-tpw').value = ''; enterApp('teacher'); } };
@@ -3055,6 +3102,7 @@ const initial = (location.hash || '').replace('#', '');
 if (role()) showPage(['home', 'roleplay', 'practice', 'help', 'agent', 'myclass', 'feedback', 'admin'].includes(initial) ? initial : 'home');
 else showPage('entry');
 if (!store.get('iMsg.tutDone', '') && role()) tutOpen(0);
+fetchClassFb();
 initFirebase().then(() => { ['student', 'teacher'].forEach(r => { if (chat[r].length <= 1) initChat(r); }); renderChat(); });
 </script>
 </body>
