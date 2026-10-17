@@ -498,6 +498,7 @@
                 <button id="start-btn" class="btn">전체 다시 뽑기</button>
             </div>
         </div>
+        <div id="rp-custom-bar" style="display:none"></div>
         <div id="mode-note">전체 연습: 모든 모둠이 이 상황 하나로 함께 역할놀이를 해요!</div>
         <div id="grid-container"></div>
     </section>
@@ -531,7 +532,7 @@
                         <select class="inp sel-cb" style="width:auto" title="대답하는 친구"></select><span>가 대답해요</span>
                         <button class="btn ghost small" id="pr-cshuffle">바꾸기</button>
                     </div>
-                    <input id="pr-custom" class="inp" style="display:none;margin-top:8px" maxlength="80" placeholder="예) 쉬는 시간에 친구가 내 자리에 앉아서 내가 앉지 못했어요">
+                    <input id="pr-custom" class="inp" style="display:none;margin-top:8px" maxlength="300" placeholder="예) 쉬는 시간에 친구가 내 자리에 앉아서 내가 앉지 못했어요">
                     <div id="pr-card" class="preview" style="margin-top:10px;font-size:1.1rem"></div>
                 </div>
 
@@ -1002,7 +1003,7 @@ service cloud.firestore {
    0. 설정 (Firebase를 쓰려면 아래 값을 채워 넣으세요. 비워두면 '로컬 모드'로 동작해요)
    ===================================================================== */
 const FIREBASE_CONFIG = { apiKey: "AIzaSyAEjlmri6EaVQrIlZjGndWBhxVQ-63tisk", authDomain: "sunny-s-apps.firebaseapp.com", projectId: "sunny-s-apps", appId: "1:611191235418:web:701ace367fd9e1af20c963" };
-const PROXY_URL_CONST = "https://script.google.com/macros/s/AKfycbzfgt3_M6eKwEG1CNYC0PGA6KqOR_vk3Hnu9RXAY5XM_MuPuvM_H2sx7bgHvGNfhmZoXw/exec";             // (선택) Apps Script 웹앱 URL을 코드에 직접 넣고 싶을 때
+const PROXY_URL_CONST = "https://script.google.com/macros/s/AKfycbzfgt3_M6eKwEG1CNYC0PGA6KqOR_vk3Hnu9RXAY5XM_MuPuvM_H2sx7bgHvGNfhmZoXw/exec";            // (선택) Apps Script 웹앱 URL을 코드에 직접 넣고 싶을 때
 const ADMIN_EMAIL = "msonedu@gmail.com";   // 이 메일로 로그인한 사람만 가이드를 저장할 수 있어요
 const GUIDE_DOC = ["appConfig", "agentGuide"];
 
@@ -1386,6 +1387,7 @@ function updateGridLayout(count) {
 }
 
 let rp = { allSame: false, picks: [], pairs: [] };
+let rpCustom = '';   // AI 선생님에서 넘어온 '현재 상황'(있으면 역할놀이 카드를 이 상황으로 만들어요)
 function randPair(usedKeys) {
     const idx = chars.map((_, i) => i);
     for (let tries = 0; tries < 30; tries++) {
@@ -1395,6 +1397,27 @@ function randPair(usedKeys) {
 }
 function rpCardHtml(i) {
     const sit = rp.picks[i], { a: A, b: B } = rp.pairs[i], formattedTitle = esc(sitTitle(sit, A, B));
+    if (sit.blank) {
+        const gcol = (cls, head, items) => `<div class="rp-col ${cls}"><h4>${head}</h4>` + items.map(([k, v]) => `<div class="rp-item"><small>${k}</small><p style="opacity:.8">${v}</p></div>`).join('') + `</div>`;
+        return `
+        <div class="card-container" onclick="this.classList.toggle('flipped')">
+            <div class="card-face rp-front">
+                <span class="rp-badge">현재 상황</span>
+                <div class="rp-acts"><button class="rp-redo" data-copy-card="${i}" title="팀보드·웨일 클래스에 붙여넣기용 텍스트 복사">팀보드 복사</button></div>
+                <div class="rp-emoji">${sit.emoji}</div>
+                <h3 class="rp-title" style="${sit.title.length > 40 ? 'font-size:clamp(1.1rem,2.4vw,1.9rem)' : ''}">${formattedTitle}</h3>
+                <div class="rp-who">${esc(A.emoji)} ${esc(A.name)} ↔ ${esc(B.emoji)} ${esc(B.name)}</div>
+                <div class="rp-hint">눌러서 뒤집기 (모둠에서 함께 써 봐요)</div>
+            </div>
+            <div class="card-face rp-back rotate-y-180">
+                <div class="rp-top"><span class="e">${sit.emoji}</span><span>${formattedTitle}</span></div>
+                <div class="rp-cols">
+                    ${gcol('g', esc(A.emoji) + ' ' + esc(A.name) + '의 말하기', [['행동·상황', '일이 일어나서 나에게 생긴 상황은? (~해서)'], ['감정', '그때 내 마음은?'], ['바람', '~해 주면 좋겠어']])}
+                    ${gcol('i', esc(B.emoji) + ' ' + esc(B.name) + '의 대답', [['인정', '내가 한 일은 (내가 ~했어)'], ['사과', '상대 마음을 생각하며 (미안해)'], ['약속', '다음부터는 ~할게']])}
+                </div>
+            </div>
+        </div>`;
+    }
     const col = (cls, head, items) => `<div class="rp-col ${cls}"><h4>${head}</h4>` + items.map(([k, v]) => `<div class="rp-item"><small>${k}</small><p>"${v}"</p></div>`).join('') + `</div>`;
     return `
         <div class="card-container" onclick="this.classList.toggle('flipped')">
@@ -1422,14 +1445,26 @@ function renderCards() {
     gridContainer.innerHTML = '';
     $('#mode-note').style.display = allSame ? 'block' : 'none';
     groupCountSelect.disabled = allSame; groupCountSelect.style.opacity = allSame ? .4 : 1;
-    const shuffled = shuffleArray([...situations]);
-    const used = [];
-    rp = { allSame, picks: shuffled.slice(0, count), pairs: [] };
-    for (let i = 0; i < count; i++) { const pr = randPair(used); used.push(pr.k); rp.pairs.push(pr); }
+    const bar = $('#rp-custom-bar');
+    if (rpCustom) {
+        const c = curChars(), cs = { id: 'tmp', blank: true, emoji: '🧭', title: rpCustom, my_action: '', my_emotion: '', my_want: '', friend_ack: '', friend_apology: '', friend_promise: '' };
+        rp = { allSame: true, picks: [cs], pairs: [{ a: c.a, b: c.b, k: 'custom' }] };
+        bar.style.display = 'block';
+        bar.innerHTML = `<b>📌 AI 선생님에서 가져온 현재 상황으로 진행 중이에요.</b> 카드를 뒤집으면 모둠이 함께 써 볼 틀이 나와요. <button class="btn ghost small" id="rp-custom-off" style="margin-left:6px">랜덤 상황으로 돌아가기</button>`;
+        bar.style.cssText = 'display:block;margin:10px auto 0;max-width:1100px;padding:10px 14px;border-radius:12px;background:var(--accent-soft);color:var(--text);font-size:.95rem';
+        $('#rp-custom-off').onclick = () => { rpCustom = ''; renderCards(); };
+    } else {
+        bar.style.display = 'none';
+        const shuffled = shuffleArray([...situations]);
+        const used = [];
+        rp = { allSame, picks: shuffled.slice(0, count), pairs: [] };
+        for (let i = 0; i < count; i++) { const pr = randPair(used); used.push(pr.k); rp.pairs.push(pr); }
+    }
     rp.picks.forEach((_, i) => { const el = document.createElement('div'); el.className = 'rp-card' + (allSame ? ' big' : ''); el.innerHTML = rpCardHtml(i); gridContainer.appendChild(el); });
 }
 function cardText(i) {
     const s = rp.picks[i], { a: A, b: B } = rp.pairs[i];
+    if (s.blank) return `[나 전달법 역할놀이] ${sitTitle(s, A, B)}\n\n▶ ${A.name}의 말하기 (행·감·바)\n행동·상황:\n감정:\n바람:\n\n▶ ${B.name}의 대답 (인·사·약)\n인정:\n사과:\n약속:`;
     return `[나 전달법] ${sitTitle(s, A, B)}\n\n▶ ${A.name}의 말하기 (행·감·바)\n행동·상황: ${s.my_action},\n감정: 나는 ${s.my_emotion}\n바람: ${s.my_want}\n\n▶ ${B.name}의 대답 (인·사·약)\n인정: ${s.friend_ack}\n사과: ${s.friend_apology}\n약속: ${s.friend_promise}`;
 }
 async function copyText(text, okMsg) { try { await navigator.clipboard.writeText(text); toast(okMsg || '복사했어요. 팀보드나 웨일 클래스에 붙여넣어 보세요'); } catch (e) { prompt('아래 내용을 복사하세요', text); } }
@@ -1446,9 +1481,9 @@ gridContainer.addEventListener('click', e => {
     rp.pairs[i] = randPair(used);
     const el = gridContainer.children[i]; el.innerHTML = rpCardHtml(i);
 });
-$('#start-btn').addEventListener('click', () => { const b = $('#start-btn'); b.classList.add('scale-90'); setTimeout(() => b.classList.remove('scale-90'), 150); renderCards(); });
-groupCountSelect.addEventListener('change', renderCards);
-modeSelect.addEventListener('change', renderCards);
+$('#start-btn').addEventListener('click', () => { const b = $('#start-btn'); b.classList.add('scale-90'); setTimeout(() => b.classList.remove('scale-90'), 150); rpCustom = ''; renderCards(); });
+groupCountSelect.addEventListener('change', () => { if (rpCustom) { rpCustom = ''; } renderCards(); });
+modeSelect.addEventListener('change', () => { if (modeSelect.value !== 'all') rpCustom = ''; renderCards(); });
 
 /* =====================================================================
    8. 나 전달법 연습 · 상황 만들기 · 피드백 · 활동지 인쇄
@@ -2059,7 +2094,7 @@ function goNext(kind) {
     const raw = hpLast || $('#hp-input').value.trim(); if (!raw) return;
     const text = convertLetters(raw);
     if (kind === 'practice') {
-        prSel.value = 'tmp'; $('#pr-custom').value = text.slice(0, 80); renderPracticeCard(); showPage('practice'); setPracticeSub('do'); toast('연습 화면으로 가져왔어요. 직접 써 보세요!');
+        prSel.value = 'tmp'; $('#pr-custom').value = text.slice(0, 300); renderPracticeCard(); showPage('practice'); setPracticeSub('do'); toast('연습 화면으로 가져왔어요. 직접 써 보세요!');
     } else {
         showPage('agent'); const role = kind === 'teacher' ? 'teacher' : 'student'; setAgentRole(role); initChat(role); renderChat();
         sendChat(role === 'teacher' ? text : `이런 일이 있었어요: ${text}\n이 일을 나 전달법으로 말해 보고 싶어요. 어떻게 시작하면 좋을까요?`);
@@ -2227,13 +2262,13 @@ function doAct(act) {
         const best = bestSituation(text);
         sitQ.pr = ''; $('#pr-q').value = ''; fillSitSelects();
         if (best) { prSel.value = String(best.id); toast('비슷한 예시 상황을 골라 두었어요'); }
-        else { prSel.value = 'tmp'; $('#pr-custom').value = text.slice(0, 80); toast('내 상황을 연습 칸에 넣어 두었어요'); }
+        else { prSel.value = 'tmp'; $('#pr-custom').value = text.slice(0, 300); toast('내 상황을 연습 칸에 넣어 두었어요'); }
         renderPracticeCard(); showPage('practice'); setPracticeSub('do');
     }
-    else if (act === 'role') { showPage('roleplay'); toast('모둠마다 상황을 뽑아 역할놀이를 해 보세요. 이 상황은 연습·활동지로도 이어 갈 수 있어요.'); }
+    else if (act === 'role') { rpCustom = text.slice(0, 300); modeSelect.value = 'all'; renderCards(); showPage('roleplay'); toast('현재 상황으로 전체 역할놀이 카드를 만들었어요'); }
     else if (act === 'sheet') {
         const d = new Date(), date = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
-        const sit = { id: 'tmp', emoji: '🧭', title: text.replace(/\s+/g, ' ').slice(0, 90), my_action: '', my_emotion: '', my_want: '', friend_ack: '', friend_apology: '', friend_promise: '' };
+        const sit = { id: 'tmp', emoji: '🧭', title: text.replace(/\s+/g, ' ').slice(0, 200), my_action: '', my_emotion: '', my_want: '', friend_ack: '', friend_apology: '', friend_promise: '' };
         openPrint([sit], { title: '갈등 돌아보기 활동지', date, answers: false });
     }
 }
