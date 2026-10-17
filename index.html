@@ -840,7 +840,7 @@
                         <div class="field"><label>Gemini API 키 (Google AI Studio에서 무료 발급) — 이 기기에만 저장돼요</label>
                             <div class="row" style="flex-wrap:nowrap"><input id="ad-key" type="password" class="inp" autocomplete="off" placeholder="AIza...">
                             <button class="btn ghost small" id="ad-key-eye">보기</button></div></div>
-                        <div class="field"><label>모델 이름</label><input id="ad-model" class="inp" placeholder="gemini-2.5-flash"></div>
+                        <div class="field"><label>모델 이름</label><input id="ad-model" class="inp" placeholder="gemini-3.8-flash (서버 중계를 쓰면 서버가 자동 선택)"></div>
                     </div>
                     <div class="field" style="margin-top:8px"><label>답변 자유도(temperature): <b id="ad-temp-v"></b> <span class="muted">(낮을수록 차분하고 일정해요)</span></label>
                         <input type="range" id="ad-temp" min="0" max="1" step="0.1"></div>
@@ -1147,7 +1147,7 @@ const HELPER_FORMAT = `[출력 형식]
    ===================================================================== */
 const state = {
     guide: { ...DEFAULT_GUIDE },
-    model: 'gemini-2.5-flash',
+    model: 'gemini-3.8-flash',
     temperature: 0.6,
     proxyUrl: '',
     fb: null,          // Firebase 핸들 (연결된 경우)
@@ -1221,13 +1221,13 @@ async function callGemini({ system, history, json = false }) {
     const body = {
         systemInstruction: { parts: [{ text: system }] },
         contents: history.map(m => ({ role: m.role === 'ai' ? 'model' : 'user', parts: [{ text: m.text }] })),
-        generationConfig: { temperature: state.temperature, maxOutputTokens: 2048, ...(json ? { responseMimeType: 'application/json' } : {}) }
+        generationConfig: { temperature: state.temperature, maxOutputTokens: 4096, ...(json ? { responseMimeType: 'application/json' } : {}) }
     };
     if (!key) {   // 이 기기에 키가 없으면 → Apps Script 중계(학급 코드 필요)
         if (!proxyUrl()) throw new Error('NO_KEY');
         const code = getClassCode(); if (!code) throw new Error('NO_CODE');
-        const j = await proxyPost({ action: 'gemini', code, number: getStudentNo(), model: state.model, body });
-        if (!j.ok) throw new Error(j.error === 'NO_KEY' ? 'SERVER_NO_KEY' : (j.error || 'EMPTY'));
+        const j = await proxyPost({ action: 'gemini', code, number: getStudentNo(), body });   // 모델은 서버가 정해요
+        if (!j.ok) { const er = new Error(j.error === 'NO_KEY' ? 'SERVER_NO_KEY' : (j.error || 'EMPTY')); er.detail = j.detail || ''; er.model = j.model || ''; throw er; }
         return j.text;
     }
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(state.model)}:generateContent`;
@@ -1259,7 +1259,15 @@ function friendlyError(e) {
     if (m === 'QUOTA') return '지금 AI가 너무 바빠요. 잠시 뒤에 다시 해 볼까요?';
     if (m === 'NETWORK') return '인터넷 연결을 확인해 주세요.';
     if (m === 'BLOCKED') return '이 내용은 AI가 답하기 어려워요. 다른 말로 바꿔 써 볼까요?';
-    return 'AI가 잠시 대답하지 못했어요. 다시 시도해 주세요.';
+    const d = e && e.detail ? ` — ${String(e.detail).slice(0, 120)}` : '';
+    if (m === 'HTTP_404') return `AI 모델을 찾지 못했어요(404). 서버(Apps Script)를 최신 Code.gs로 다시 배포하면 쓸 수 있는 모델을 자동으로 골라요.${d}`;
+    if (m === 'HTTP_400') return `AI 요청이 거절됐어요(400). API 키가 맞는지, MODEL 속성이 올바른지 확인해 주세요.${d}`;
+    if (m === 'HTTP_401' || m === 'HTTP_403') return `API 키가 거부됐어요(${m.slice(5)}). Google AI Studio에서 새 키를 받아 GEMINI_API_KEY에 넣어 주세요.${d}`;
+    if (/^HTTP_5/.test(m)) return 'Google AI 서버가 잠시 바빠요. 조금 뒤에 다시 해 주세요.';
+    if (m === 'BAD_ACTION') return '서버가 옛 버전이에요. Code.gs를 붙여 넣고 [배포 관리 > 새 버전]으로 다시 배포해 주세요.';
+    if (m === 'EMPTY') return 'AI가 빈 답을 보냈어요. 한 번 더 눌러 주세요.';
+    if (m === 'NO_PROXY') return '서버 주소가 아직 없어요. 관리자 페이지나 index.html의 PROXY_URL_CONST를 확인해 주세요.';
+    return `AI가 잠시 대답하지 못했어요. 다시 시도해 주세요. (오류: ${m.slice(0, 40)})`;
 }
 const charRule = () => { const c = curChars(); return `[등장 캐릭터]\n저학년 학생도 이름으로 알아볼 수 있도록, 입력의 알파벳(A, B, C…)은 이미 캐릭터 이름으로 바뀌어 전달된다. 인물은 반드시 그 이름으로 부른다. 이름이 따로 없으면 기본으로 말하는 친구는 '${c.a.name}', 대답하는 친구는 '${c.b.name}'로 부른다. (캐릭터: ${chars.slice(0, 10).map(x => x.name).join(', ')} 등)`; };
 const buildSystem = kind => [state.guide.commonRules,
@@ -2130,7 +2138,7 @@ function fillAdminForm() {
 }
 function readAdminForm() {
     const g = {}; GUIDE_KEYS.forEach(k => { g[k] = $('#g-' + k).value; });
-    return { ...g, model: $('#ad-model').value.trim() || 'gemini-2.5-flash', temperature: parseFloat($('#ad-temp').value), proxyUrl: $('#ad-proxy').value.trim() };
+    return { ...g, model: $('#ad-model').value.trim() || 'gemini-3.8-flash', temperature: parseFloat($('#ad-temp').value), proxyUrl: $('#ad-proxy').value.trim() };
 }
 $('#ad-temp').oninput = () => $('#ad-temp-v').textContent = $('#ad-temp').value;
 $('#ad-key-eye').onclick = () => { const k = $('#ad-key'); k.type = k.type === 'password' ? 'text' : 'password'; $('#ad-key-eye').textContent = k.type === 'password' ? '보기' : '숨기기'; };
