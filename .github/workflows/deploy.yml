@@ -1,4 +1,4 @@
-﻿name: Deploy to Pages
+﻿name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
@@ -15,11 +15,17 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.d.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - run: mkdir site && cp index.html site/
+      - name: Build site folder
+        run: |
+          mkdir site
+          cp index.html site/
+          cp -f og.png apple-touch-icon.png favicon.png site/ 2>/dev/null || true
+      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
-        with: { path: site }
-      - id: d
+        with:
+          path: site
+      - id: deployment
         uses: actions/deploy-pages@v4
