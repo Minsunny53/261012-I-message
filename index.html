@@ -845,22 +845,20 @@
                             <button class="btn ghost small" id="ad-logout">로그아웃</button>
                         </div>
                     </div>
+                    <p id="ad-outdated" class="fb warn" style="display:none;margin:8px 0 0">이 기기/Firebase에 저장된 예전 가이드가 있어요. 지금은 <b>새 기본 가이드</b>가 쓰이고 있어요. 아래 내용을 확인하고 <b>저장하기</b>를 누르면 새 버전으로 저장돼요.</p>
                     <p class="muted" style="margin:6px 0 0">가이드를 고치고 <b>저장</b>하면 학생/교사 AI 선생님과 '실제 상황을 도와줘'에 바로 적용돼요.</p>
                 </div>
 
                 <div class="panel">
-                    <h3>API 설정</h3>
-                    <div class="grid2">
-                        <div class="field"><label>Gemini API 키 (Google AI Studio에서 무료 발급) — 이 기기에만 저장돼요</label>
-                            <div class="row" style="flex-wrap:nowrap"><input id="ad-key" type="password" class="inp" autocomplete="off" placeholder="AIza...">
-                            <button class="btn ghost small" id="ad-key-eye">보기</button></div></div>
-                        <div class="field"><label>모델 이름</label><input id="ad-model" class="inp" placeholder="gemini-3.8-flash (서버 중계를 쓰면 서버가 자동 선택)"></div>
-                    </div>
-                    <div class="field" style="margin-top:8px"><label>답변 자유도(temperature): <b id="ad-temp-v"></b> <span class="muted">(낮을수록 차분하고 일정해요)</span></label>
-                        <input type="range" id="ad-temp" min="0" max="1" step="0.1"></div>
-                    <div class="field" style="margin-top:12px"><label>Apps Script 웹앱 URL — 연결하면 학생 기기에 API 키 없이 AI를 쓸 수 있고, 선생님 학급 기능이 켜져요. 코드의 PROXY_URL_CONST에 넣어 두면 모든 기기에 자동 적용돼요 (Firebase 연결 시에도 공유)</label>
-                        <input id="ad-proxy" class="inp" placeholder="https://script.google.com/macros/s/.../exec"></div>
-                                        <p class="muted" style="margin:8px 0 0">※ API 키는 Firebase나 GitHub에 올라가지 않고, 이 기기(브라우저)에만 보관돼요. 학생들이 쓰는 기기(교실 PC·태블릿)마다 관리자로 들어와서 한 번씩 넣어 주세요.</p>
+                    <h3>AI 연결 상태</h3>
+                    <p class="muted" style="margin:0 0 8px">API 키와 모델은 Apps Script 서버가 관리해요(여기서 입력하지 않아요). 아래 <b>연결 점검</b>으로 서버 버전·키·사용 모델을 확인할 수 있어요.</p>
+                    <div class="row"><button class="btn" id="ad-ping">🔍 AI 연결 점검</button><span class="muted" id="ad-ping-out"></span></div>
+                    <details class="acc" style="margin-top:10px"><summary>고급 설정</summary>
+                        <div class="field" style="margin-top:8px"><label>답변 자유도(temperature): <b id="ad-temp-v"></b> <span class="muted">(낮을수록 차분하고 일정해요)</span></label>
+                            <input type="range" id="ad-temp" min="0" max="1" step="0.1"></div>
+                        <div class="field" style="margin-top:12px"><label>Apps Script 웹앱 URL (보통은 코드의 PROXY_URL_CONST에 넣어 두면 돼요)</label>
+                            <input id="ad-proxy" class="inp" placeholder="https://script.google.com/macros/s/.../exec"></div>
+                    </details>
                 </div>
 
                 <div class="panel" style="display:flex;flex-direction:column;gap:10px">
@@ -881,9 +879,6 @@
                         <button class="btn ghost small" data-reset="helperGuide" style="margin-top:6px">기본값으로 되돌리기</button></details>
                     <div class="row">
                         <button class="btn" id="ad-save">저장하기</button>
-                        <button class="btn ghost" id="ad-export">⬇️ 가이드 내보내기(JSON)</button>
-                        <button class="btn ghost" id="ad-import">가져오기</button>
-                        <input type="file" id="ad-file" accept=".json,application/json" style="display:none">
                     </div>
                     <div class="muted" id="ad-save-msg"></div>
                 </div>
@@ -1032,22 +1027,22 @@ const situations = [
       friend_ack: "내가 너랑 같이 안 놀겠다고 말했어.", friend_apology: "너를 외롭게 해서 미안해.", friend_promise: "이번에는 네가 하고 싶은 놀이를 같이 하자." },
     { id: 8, emoji: "🏃‍♀️", title: "친구가 교실에서 뛰다가\n내 책상을 칠 때", color: "bg-purple-100",
       my_action: "책상이 흔들려서 내 물건이 떨어질까 봐", my_emotion: "깜짝 놀라고 불안해.", my_want: "교실에서는 살금살금 걸어 다니면 좋겠어.",
-      friend_ack: "내가 뛰다가 네 책상을 쳤어.", friend_apology: "책상을 쳐서 깜짝 놀라게 해 미안해.", friend_promise: "교실에서는 꼭 걸어 다닐게." },
+      friend_ack: "내가 뛰다가 네 책상을 쳤어.", friend_apology: "책상을 쳐서 깜짝 놀라게 해 미안해.", friend_promise: "다음부터는 교실에서 꼭 걸어 다닐게." },
     { id: 9, emoji: "🖍️", title: "친구가 크레파스를\n혼자만 쓸 때", color: "bg-pink-100",
       my_action: "나는 크레파스를 쓰지 못해서", my_emotion: "속상해.", my_want: "나도 색칠할 수 있도록 같이 크레파스를 썼으면 좋겠어.",
-      friend_ack: "내가 크레파스를 혼자서만 쓰고 있었어.", friend_apology: "같이 쓰지 않아서 미안해.", friend_promise: "우리 같이 사이좋게 나눠 쓰자." },
+      friend_ack: "내가 크레파스를 혼자서만 쓰고 있었어.", friend_apology: "같이 쓰지 않아서 미안해.", friend_promise: "다음부터는 크레파스를 같이 사이좋게 나눠 쓸게." },
     { id: 10, emoji: "👅", title: "친구가 나를\n나쁜 별명으로 부를 때", color: "bg-rose-100",
-      my_action: "내 예쁜 이름 대신 이상한 말로 불리니까", my_emotion: "기분이 정말 나빠.", my_want: "앞으로는 내 원래 이름으로 다정하게 불러주면 좋겠어.",
+      my_action: "내 예쁜 이름 대신 이상한 말로 불리니까", my_emotion: "속상하고 기분이 정말 나빠.", my_want: "앞으로는 내 원래 이름으로 다정하게 불러주면 좋겠어.",
       friend_ack: "내가 너를 나쁜 별명으로 불렀어.", friend_apology: "기분 나쁘게 불러서 미안해.", friend_promise: "앞으로는 꼭 예쁜 네 이름으로 부를게." },
     { id: 11, emoji: "👟", title: "친구가 내\n새 신발을 밟았을 때", color: "bg-red-50",
       my_action: "오늘 처음 신은 깨끗한 신발이 더러워져서", my_emotion: "정말 속상해.", my_want: "걸어 다닐 때 발밑을 조금 더 조심해 주면 좋겠어.",
       friend_ack: "내가 네 신발을 밟았어.", friend_apology: "새 신발을 밟아서 정말 미안해.", friend_promise: "다음부터는 발밑을 조심해서 걸을게." },
     { id: 12, emoji: "🗑️", title: "친구가 내 책상에\n쓰레기를 버릴 때", color: "bg-orange-50",
       my_action: "내 자리가 지저분해져서 공부하기가 불편하니까", my_emotion: "기분이 안 좋아.", my_want: "쓰레기는 꼭 쓰레기통에 버려 주면 좋겠어.",
-      friend_ack: "내가 네 책상에 쓰레기를 버렸어.", friend_apology: "네 자리를 더럽혀서 미안해.", friend_promise: "지금 바로 쓰레기통에 버릴게." },
+      friend_ack: "내가 네 책상에 쓰레기를 버렸어.", friend_apology: "네 자리를 더럽혀서 미안해.", friend_promise: "다음부터는 쓰레기를 꼭 쓰레기통에 버릴게." },
     { id: 13, emoji: "👈", title: "수업 시간에 친구가\n내 등을 계속 칠 때", color: "bg-yellow-50",
       my_action: "선생님 말씀을 잘 들어야 하는데 자꾸 신경이 쓰여서", my_emotion: "답답해.", my_want: "수업 중에는 장난치지 않고 집중해 주면 좋겠어.",
-      friend_ack: "수업 시간에 내가 네 등을 계속 쳤어.", friend_apology: "수업을 방해해서 미안해.", friend_promise: "수업 시간에는 조용히 앉아 있을게." },
+      friend_ack: "수업 시간에 내가 네 등을 계속 쳤어.", friend_apology: "수업을 방해해서 미안해.", friend_promise: "다음부터는 수업 시간에 조용히 앉아 있을게." },
     { id: 14, emoji: "🛝", title: "미끄럼틀에서 친구가\n나를 밀 때", color: "bg-green-50",
       my_action: "높은 곳에서 떨어져 다칠 것 같아서", my_emotion: "너무 무서워.", my_want: "미끄럼틀에서는 밀지 말고 차례를 기다려 주면 좋겠어.",
       friend_ack: "내가 미끄럼틀에서 너를 밀었어.", friend_apology: "위험하게 밀어서 정말 미안해.", friend_promise: "다음부터는 꼭 차례를 기다릴게." },
@@ -1056,7 +1051,7 @@ const situations = [
       friend_ack: "내가 네 비밀을 다른 친구들에게 말했어.", friend_apology: "비밀 약속을 안 지켜서 정말 미안해.", friend_promise: "앞으로는 비밀 약속을 꼭 지킬게." },
     { id: 16, emoji: "🗣️", title: "내가 말하는데 친구가\n중간에 끼어들 때", color: "bg-blue-50",
       my_action: "내 생각을 끝까지 다 말하지 못해서", my_emotion: "답답하고 아쉬워.", my_want: "내가 말을 다 끝낼 때까지 잘 들어주면 좋겠어.",
-      friend_ack: "네가 말하는 중에 내가 끼어들었어.", friend_apology: "말을 끊어서 미안해.", friend_promise: "네가 말을 다 할 때까지 잘 기다릴게." },
+      friend_ack: "네가 말하는 중에 내가 끼어들었어.", friend_apology: "말을 끊어서 미안해.", friend_promise: "다음부터는 네가 말을 다 할 때까지 잘 기다릴게." },
     { id: 17, emoji: "😆", title: "내가 책을 잘못 읽었는데\n친구가 비웃을 때", color: "bg-indigo-50",
       my_action: "누구나 실수할 수 있는데 웃음거리가 된 것 같아", my_emotion: "창피하고 속상해.", my_want: "내가 실수했을 때는 웃지 말고 격려해 주면 좋겠어.",
       friend_ack: "네가 책을 잘못 읽을 때 내가 웃었어.", friend_apology: "비웃는 것처럼 보여서 기분 상하게 해 미안해.", friend_promise: "다음부터는 웃지 않고 도와줄게." },
@@ -1068,50 +1063,56 @@ const situations = [
       friend_ack: "내가 너한테 물을 튀겼어.", friend_apology: "옷을 젖게 해서 미안해.", friend_promise: "손을 씻을 때는 물이 안 튀게 조심할게." },
     { id: 20, emoji: "🧹", title: "청소 시간에 친구가\n청소를 안 하고 놀 때", color: "bg-rose-50",
       my_action: "나 혼자 청소를 다 해야 해서 팔도 아프고", my_emotion: "너무 힘들어.", my_want: "우리가 맡은 구역이니까 같이 빨리 끝내고 놀면 좋겠어.",
-      friend_ack: "내가 청소를 안 하고 놀았어.", friend_apology: "너 혼자 힘들게 해서 미안해.", friend_promise: "지금부터 내가 열심히 도울게." }
+      friend_ack: "내가 청소를 안 하고 놀았어.", friend_apology: "너 혼자 힘들게 해서 미안해.", friend_promise: "다음부터는 청소 시간에 내가 먼저 열심히 도울게." }
 ];
+const SIT_CATS = [
+    ['🎒 물건·자리', [1, 11, 12, 18, 6]],
+    ['🤕 몸·안전', [2, 8, 14, 19]],
+    ['💬 말·놀림·마음', [3, 10, 17, 16, 15]],
+    ['🤝 놀이·함께하기', [7, 9, 4, 20]],
+    ['📚 수업·집중', [5, 13]]
+];
+const catOf = s => { const c = SIT_CATS.find(([, ids]) => ids.includes(s.id)); return c ? c[0] : '기타'; };
 const plainTitle = s => s.title.replace(/\n/g, ' ');
 
 /* =====================================================================
    2. 기본 에이전트 가이드 (관리자 페이지에서 언제든 수정 가능)
    ===================================================================== */
+const GUIDE_VER = 2;   // 기본 가이드를 크게 고칠 때 올려요. 관리자 화면에서 옛 저장본과 구분해요.
 const DEFAULT_GUIDE = {
     commonRules:
 `[공통 규칙]
-- 항상 한국어로, 따뜻하고 존중하는 말투로 말한다.
-- 핵심 틀은 '나 전달법'이다.
-  · 나 전달법 = 행동(상황) · 감정 · 바람 (행감바)
-  · 형태: "나는 (상황)에서 (감정)이야. (바라는 점)해 주면 좋겠어."
-- 상대 반응 틀은 '인사약'이다. 인정 · 사과 · 약속
-  · 형태: "내가 (한 행동)을 했어. (마음 상하게 해서) 미안해. 다음부터는 (약속)할게."
-- 가장 중요한 원칙: '탓하기'가 아니라 '나의 상황과 감정'을 정확히 표현하는 것에 초점을 맞춘다.
-  · 금지: "너 때문에", "네가 ~해서 ~야", "넌 항상/맨날", 상대를 평가하거나 별명 붙이는 말
-  · 권장: "나는 ~한 상황이라서 ~한 마음이야" (주어는 '나', 내용은 내 상황·몸의 느낌·감정)
-  · 상대의 행동은 필요할 때 '사실만' 짧게 말하고, 판단·추측·비난을 섞지 않는다.
-- 감정 단어는 구체적으로 돕는다. (속상해, 답답해, 서운해, 무서워, 불안해, 창피해, 외로워, 짜증 나, 억울해 등)
-- 바람은 '하지 마'보다 '~해 주면 좋겠어'처럼 긍정형으로 바꾼다.
-- 폭력, 따돌림, 학대, 자해 등 위험 신호가 보이면 문제를 혼자 해결하게 하지 말고 즉시 믿을 수 있는 어른(담임 선생님)에게 알리도록 안내한다.
-- 이름, 연락처 같은 개인정보는 묻지 않고, 적으면 '친구'처럼 바꿔 쓰도록 안내한다.`,
+- 항상 한국어로, 따뜻하고 존중하는 말투로, 초등학생이 읽을 수 있는 쉬운 낱말을 쓴다.
+- 핵심 틀은 '나 전달법'이다. (교육부 자료의 3요소: 상황(행동)·영향·느낌 → 이 앱에서는 행동(상황)·감정·바람, 줄여서 행감바)
+  · 형태: "(내게 생긴 상황)해서, 나는 (감정)해. (바라는 행동)해 주면 좋겠어."
+  · 참고 틀: "네가 ~하니까(사실) 나는 ~해(감정). 나는 네가 ~했으면 좋겠어(바람)."
+- 듣는 친구의 반응 틀은 '인사약'이다: 인정(내가 한 행동) · 사과 · 약속(다음에 할 구체적 행동). 변명·반문 없이 "내가 ~했어. 미안해. 다음부터는 ~할게."
+- 사실과 의견을 구분하게 돕는다. 사실은 보고 들은 행동("내 연필을 가져갔어"), 의견은 평가("넌 예의가 없어", "게을러"). 말에는 사실만 남기고 평가는 뺀다.
+- 금지(너 전달법): "너 때문에", "넌 항상/맨날", 비난·평가·별명·비꼬기, 명령("하지 마!"). "~라고 생각해"로 비난을 살짝 숨기는 것도 안 된다.
+- 나 전달법의 모양만 흉내 낸 비아냥, 감정을 폭발시키는 말도 안 된다. 상대의 기분도 존중한다.
+- 감정은 구체적인 낱말로 돕는다: 속상해, 답답해, 서운해, 무서워, 불안해, 창피해, 외로워, 억울해, 당황스러워, 걱정돼, 짜증 나. 같은 일에도 사람마다 감정과 바람이 다를 수 있음을 받아들인다.
+- 바람은 '하지 마'보다 '~해 주면 좋겠어'처럼 긍정형으로, 구체적인 행동 한 가지로 말한다.
+- 선생님·어른께 말하는 상황이면 존댓말("~해서 속상해요. ~해 주시면 좋겠어요")로, 친구에게는 반말로 말하게 한다.
+- 폭력, 협박, 돈 요구, 따돌림, 학대, 자해 등 위험 신호가 있으면 혼자 해결하게 하지 말고 즉시 담임 선생님이나 보호자 같은 믿을 수 있는 어른께 알리도록 안내한다. 이때는 연습보다 안전이 먼저다.
+- 이름·연락처 같은 개인정보는 묻지 않고, 적으면 '친구'처럼 바꿔 쓰도록 안내한다.`,
 
     studentGuide:
 `[학생용 AI 선생님 가이드]
-너는 초등학생 곁에서 마음 표현을 돕는 다정한 'AI 선생님'이다.
-가장 중요한 목표: 답을 알려주는 것이 아니라, 학생의 입에서 나 전달법(행감바)과 인사약이 스스로 나오도록 이끄는 것이다.
+너는 초등학생 곁에서 마음 표현을 돕는 다정한 'AI 선생님'이다. 목표는 답을 알려 주는 것이 아니라, 학생의 입에서 행감바와 인사약이 스스로 나오게 하는 것이다.
 
 대화 원칙
-1. 완성된 문장을 대신 써 주지 않는다. 학생이 "알려줘", "대신 써 줘"라고 해도 정중히 거절하고, 작은 질문이나 힌트로 되돌린다.
-2. 한 번에 질문은 딱 1개만 한다. 답변은 1~3문장, 쉬운 낱말(초등 1~2학년 수준)로 쓴다.
-3. 순서대로 유도한다.
-   ① 무슨 일이 있었는지 사실 묻기 ("그때 어떤 일이 있었어?")
-   ② 그때 나는 어떤 상황이었는지 / 몸과 마음이 어땠는지 묻기
-   ③ 감정 이름 찾기 (막히면 "속상해/답답해/무서워 중에 어떤 게 가까워?"처럼 감정 후보 3~4개를 골라 보게 한다)
-   ④ 바라는 점 묻기 ("친구가 어떻게 해 주면 좋을까?")
-   ⑤ 학생이 직접 한 문장으로 말해 보게 하기 ("지금까지 말한 걸 '나는 ~에서 ~해'로 말해 볼까?")
-   ⑥ 상대 입장으로 바꿔 인정·사과·약속을 학생이 직접 말해 보게 하기
-4. 학생이 "너 때문에", "쟤가 나쁜 거야"처럼 탓하는 말을 하면 혼내지 말고 "그랬구나. 그때 네 마음은 어땠어?"처럼 '나의 마음'으로 되돌린다.
-5. 힌트가 필요하면 지금 학생의 상황이 아닌 '다른 비슷한 예'로 보여 준다. (정답 문장 그대로 주지 않기)
-6. 학생이 쓴 말이 좋으면 구체적으로 칭찬한다. ("'답답해'라고 마음을 정확히 말했네!") 부족한 부분은 질문으로 고치게 한다.
-7. 6칸(행·감·바·인·사·약)을 학생이 모두 자기 말로 채우면 크게 칭찬하고, 실제로 친구에게 용기 내어 말해 보도록 응원한다.`,
+1. 완성 문장을 대신 써 주지 않는다. "대신 써 줘"라고 해도 부드럽게 거절하고 작은 질문이나 힌트로 되돌린다.
+2. 답은 1~3문장, 질문은 한 번에 딱 1개. 쉬운 낱말로 쓴다.
+3. 순서: ①무슨 일이 있었는지(보고 들은 것) → ②그때 나에게 생긴 일·몸의 느낌 → ③감정 이름(막히면 후보 3~4개 중 고르기) → ④바라는 점 → ⑤"~해서 나는 ~해. ~해 주면 좋겠어"로 한 번에 말해 보기 → ⑥상대 입장에서 인정·사과·약속 말해 보기.
+4. 먼저 학생 말에서 잘한 점을 구체적으로 짚어 칭찬하고, 그다음 질문한다. ("'답답해'라고 마음을 정확히 말했네!")
+5. 학생이 막히는 곳에 맞춰 돕는다.
+  · 탓하는 말("너 때문에", "쟤가 나빠")이 나오면 혼내지 말고 "그랬구나. 그때 네 마음은 어땠어?"로 '나의 마음'으로 되돌린다. 평가가 나오면 "친구가 뭘 했는지 보고 들은 것만 말해 볼까?"
+  · 감정을 못 찾으면 "그때 몸이 어땠어? (가슴이 두근두근, 얼굴이 뜨거움)"를 먼저 묻고 감정 낱말 3~4개 중 고르게 한다. "몰라/그냥"이면 "괜찮아, 천천히 같이 찾아보자."
+  · 바람이 "하지 마!"이면 "그럼 대신 어떻게 해 주면 좋을까?"로 바꾸게 한다.
+  · 인정이 변명("하지만 너도…")이면 "먼저 내가 한 일만 말해 볼까? '내가 ~했어'로."
+  · 약속이 막연하면 "다음에 똑같은 일이 생기면 딱 한 가지, 뭘 할 수 있을까?"
+6. 힌트가 필요하면 지금 상황이 아닌 다른 비슷한 예로 보여 준다. (예: 우유가 없어졌을 때 "내 우유가 없어져서 속상해. 마시기 전에 물어봐 주면 좋겠어.") 지금 상황의 정답 문장은 주지 않는다.
+7. 6칸(행·감·바·인·사·약)을 학생이 모두 자기 말로 채우면 크게 칭찬하고, 실제로 용기 내어 말해 보도록 응원한다.`,
 
     studentFirst: "안녕! 나는 AI 선생님이야. 요즘 친구랑 지내면서 마음이 불편했던 일이 있었니? 어떤 일인지 편하게 말해 줘.",
 
@@ -1120,27 +1121,29 @@ const DEFAULT_GUIDE = {
 너는 초등 교사의 학생 생활지도를 돕는 동료 교사 같은 조력자이다. 초점은 '교사가 학생을 어떻게 지도할 것인가'이다.
 
 답변 방식
-1. 교사가 학급에서 일어난 상황을 적으면 먼저 핵심 사실을 2~3줄로 정리하고, 부족한 정보는 최대 2개만 되묻는다.
-2. 그 다음 아래 구성으로 간결하게 답한다.
-   · 지도 순서: 안전 확보 → 감정 가라앉히기 → 각자 사실 듣기 → 나 전달법(행감바) 말하기 → 인사약 → 사후 확인
-   · 피해/관련 학생 각각에게 던질 질문 예시 (비난 없이 '나의 상황과 감정'을 끌어내는 질문)
-   · 교사가 직접 쓸 수 있는 말 예시: 교사도 "선생님은 ~한 상황이라서 ~한 마음이야"처럼 나 전달법으로 말한다.
-   · 학생이 말하게 도울 행감바·인사약 '질문 틀' (학생이 스스로 말하게 하는 질문 중심, 완성 대사는 예시로만)
-   · 주의할 점 (낙인 금지, 공개 훈계 피하기, 양쪽 입장 존중)
-3. 학교폭력 의심, 신체 손상, 반복되는 따돌림 등은 교사 혼자 판단하지 않고 학교 절차(학교폭력 담당, 관리자 협의, 보호자 연락)를 확인하도록 안내한다. 법적·의학적 최종 판단은 하지 않는다.
-4. 학생 이름 대신 A, B 같은 기호를 쓰도록 안내한다.
-5. 길지 않게, 바로 쓸 수 있는 문장 위주로 답한다.`,
+1. 교사가 적은 상황을 보고 핵심 사실을 2~3줄로 정리한다. (관찰 가능한 행동 중심, 평가는 제외) 꼭 필요한 정보만 최대 2개 되묻는다.
+2. 이어서 아래 구성으로 간결하게 답한다.
+  · 지도 순서: 안전 확보 → 감정 가라앉히기(감정 낱말·감정 카드로 이름 붙이기) → 각자 사실 듣기(사실과 의견 구분) → 나 전달법(행감바) 말하기 → 상대의 인사약 → 사후 확인·칭찬
+  · 관련 학생별 질문 예시: 비난 없이 '나의 상황과 감정'을 끌어내는 질문
+  · 교사가 직접 쓸 말: "선생님은 ~한 상황이라서 ~한 마음이야. ~해 주면 좋겠어."
+  · 어려움 유형별 팁: 탓하기 → 상황을 '나에게 생긴 일'로 바꾸기 / 감정 표현이 어려움 → 감정 카드·몸의 느낌 / 바람이 명령형 → 긍정형 / 인정·사과가 어려움 → "내가 ~했어" 문장 틀 / 약속이 막연함 → 구체적 행동 한 가지
+  · 주의: 낙인·공개 훈계 금지, 양쪽 입장 존중, 나 전달법의 모양만 흉내 낸 비꼬기 경계, 감정과 바람은 사람마다 다를 수 있음을 알려 주기, 참여를 어려워하는 학생은 격려로 자신감 지키기
+3. 수업으로 이어 가길 원하면 흐름을 제안한다: 동기유발(너 전달법을 듣고 기분 말하기) → 원리(사실·감정·바람) → 연습(감정 카드게임·역할극, 게임·역할놀이를 좋아하는 학생이 많음) → 발표와 서로 칭찬 → 정리. 평가는 관찰·자기평가 중심으로 한다.
+4. 협박·폭력·돈 요구·반복되는 따돌림 등은 교사 혼자 판단하지 말고 학교 절차(학교폭력 담당, 관리자 협의, 보호자 연락)를 확인하도록 안내한다. 법적·의학적 최종 판단은 하지 않는다.
+5. 학생 이름 대신 A, B 같은 기호를 쓰도록 안내한다. 길지 않게, 바로 쓸 수 있는 문장 위주로 답한다.`,
 
     teacherFirst: "안녕하세요, 선생님! 학급에서 있었던 상황을 간단히 적어 주세요. (학생 이름 대신 A, B, C로 쓰시면 저학년도 아는 캐릭터 이름으로 자동으로 바꿔 드려요) 학생 지도 순서와 말 예시를 함께 정리해 드릴게요.",
 
     helperGuide:
 `[상황 추천 가이드 — '실제 상황을 도와줘']
 사용자가 적은 실제 학급 상황을 바탕으로 초등학생이 바로 말해 볼 수 있는 표현을 추천한다.
-- 나 전달법(행감바): 탓하지 않고, '나에게 생긴 상황'과 '내 감정'을 정확히 표현한다. "너 때문에"는 쓰지 않는다.
-- 인사약: 상대가 할 수 있는 인정·사과·약속 표현을 쓴다. (말하는 사람이 요구하는 말이 아니라, 상대가 스스로 할 법한 말)
+- 나 전달법(행감바): 탓하지 않고 '나에게 생긴 상황'과 '내 감정'을 정확히 쓴다. "너 때문에"는 쓰지 않고, 사실(보고 들은 행동)만 남긴다.
+- 바람은 "~해 주면 좋겠어"처럼 긍정형 한 가지로 쓴다. ("하지 마"는 쓰지 않는다)
+- 인사약: 상대가 스스로 할 법한 인정·사과·약속 표현을 쓴다. 변명 없이 "내가 ~했어 / 미안해 / 다음부터는 ~할게"를 따른다. 약속은 구체적인 행동 한 가지로 쓴다.
+- 선생님이나 어른에게 말하는 상황이면 존댓말로 쓴다.
 - 초등 저학년이 쓰는 쉬운 말로, 문장은 짧게 쓴다.
 - 감정은 입력에서 드러난 마음을 우선 쓰고, 없으면 가장 알맞은 감정 한 가지를 제안한다.
-- tip에는 말할 때 목소리·표정·타이밍 등 짧은 조언 1~2문장을 쓴다.`
+- tip에는 말할 때 목소리·표정·타이밍 등 짧은 조언 1~2문장을 쓴다. 협박·폭력·돈 요구처럼 위험한 상황이면 tip에 "혼자 해결하지 말고 믿을 수 있는 어른께 알려요"를 꼭 쓴다.`
 };
 
 // 코드에서 고정으로 붙이는 안전/출력 규칙 (관리자가 지워도 유지)
@@ -1161,14 +1164,12 @@ const HELPER_FORMAT = `[출력 형식]
    ===================================================================== */
 const state = {
     guide: { ...DEFAULT_GUIDE },
-    model: 'gemini-3.8-flash',
+    guideOutdated: false,
     temperature: 0.6,
     proxyUrl: '',
     fb: null,          // Firebase 핸들 (연결된 경우)
     adminUser: null    // 로그인한 관리자 이메일
 };
-const KEY_STORE = 'iMsg.geminiKey';
-const getApiKey = () => store.get(KEY_STORE, '') || '';
 
 function loadLocalGuide() {
     try {
@@ -1178,13 +1179,12 @@ function loadLocalGuide() {
             applyGuide(o);
         }
     } catch (e) {}
-    const m = store.get('iMsg.model'); if (m) state.model = m;
     const t = parseFloat(store.get('iMsg.temp')); if (!isNaN(t)) state.temperature = t;
 }
 function applyGuide(o) {
     if (!o || typeof o !== 'object') return;
-    Object.keys(DEFAULT_GUIDE).forEach(k => { if (typeof o[k] === 'string' && o[k].trim()) state.guide[k] = o[k]; });
-    if (typeof o.model === 'string' && o.model.trim()) state.model = o.model.trim();
+    if ((o.guideVer || 0) < GUIDE_VER) { state.guideOutdated = true; }   // 옛 저장본: 새 기본 가이드를 그대로 쓰고, 관리자에게 알려 줘요
+    else Object.keys(DEFAULT_GUIDE).forEach(k => { if (typeof o[k] === 'string' && o[k].trim()) state.guide[k] = o[k]; });
     if (typeof o.temperature === 'number') state.temperature = Math.min(1, Math.max(0, o.temperature));
     if (typeof o.proxyUrl === 'string') state.proxyUrl = /^https:\/\/script\.google\.com\//.test(o.proxyUrl.trim()) ? o.proxyUrl.trim() : '';
 }
@@ -1228,40 +1228,27 @@ async function proxyPost(payload) {
     if (!j) throw new Error('NETWORK');
     return j;
 }
-async function callGemini({ system, history, json = false }) {
+const KIND_CFG = { student: ['fast', 500], fb: ['fast', 700], teacher: ['smart', 1800], helper: ['smart', 1300], test: ['smart', 1500] };
+async function callGemini({ system, history, json = false, kind = 'student', admin = false }) {
     const lastTurn = history[history.length - 1];
     if (lastTurn && lastTurn.role !== 'ai' && PII_RE.test(String(lastTurn.text || ''))) throw new Error('PII');
-    const key = getApiKey();
+    const [tier, maxTok] = KIND_CFG[kind] || KIND_CFG.student;
     const body = {
         systemInstruction: { parts: [{ text: system }] },
         contents: history.map(m => ({ role: m.role === 'ai' ? 'model' : 'user', parts: [{ text: m.text }] })),
-        generationConfig: { temperature: state.temperature, maxOutputTokens: 4096, ...(json ? { responseMimeType: 'application/json' } : {}) }
+        generationConfig: { temperature: state.temperature, maxOutputTokens: maxTok, ...(json ? { responseMimeType: 'application/json' } : {}) }
     };
-    if (!key) {   // 이 기기에 키가 없으면 → Apps Script 중계(학급 코드 필요)
-        if (!proxyUrl()) throw new Error('NO_KEY');
-        const code = getClassCode(); if (!code) throw new Error('NO_CODE');
-        const j = await proxyPost({ action: 'gemini', code, number: getStudentNo(), body });   // 모델은 서버가 정해요
-        if (!j.ok) { const er = new Error(j.error === 'NO_KEY' ? 'SERVER_NO_KEY' : (j.error || 'EMPTY')); er.detail = j.detail || ''; er.model = j.model || ''; throw er; }
-        return j.text;
-    }
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(state.model)}:generateContent`;
-    let res;
-    try {
-        res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(body) });
-    } catch (e) { throw new Error('NETWORK'); }
-    if (!res.ok) {
-        if (res.status === 400 || res.status === 403) throw new Error('BAD_KEY');
-        if (res.status === 429) throw new Error('QUOTA');
-        throw new Error('HTTP_' + res.status);
-    }
-    const data = await res.json();
-    const text = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').trim();
-    if (!text) throw new Error(data.promptFeedback?.blockReason ? 'BLOCKED' : 'EMPTY');
-    return text;
+    if (!proxyUrl()) throw new Error('NO_PROXY');
+    const req = { action: 'gemini', tier, body };
+    const ak = admin && typeof amKey === 'function' ? amKey() : '';
+    if (ak) req.adminKey = ak;
+    else { const code = getClassCode(); if (!code) throw new Error('NO_CODE'); req.code = code; req.number = getStudentNo(); }
+    const j = await proxyPost(req);   // 모델은 서버가 정해요
+    if (!j.ok) { const er = new Error(j.error === 'NO_KEY' ? 'SERVER_NO_KEY' : (j.error || 'EMPTY')); er.detail = j.detail || ''; er.model = j.model || ''; throw er; }
+    return j.text;
 }
 function friendlyError(e) {
     const m = String(e.message || e);
-    if (m === 'NO_KEY') return 'AI 연결이 아직 안 되어 있어요. 관리자 페이지에서 API 키를 넣어 주세요.';
     if (m === 'NO_CODE') return '위쪽 버튼을 눌러 학급 코드와 내 번호를 먼저 넣어 주세요.';
     if (m === 'BAD_CODE') return '학급 코드가 맞지 않아요. 선생님께 다시 물어봐요.';
     if (m === 'PII') return '전화번호·이메일·주소처럼 보이는 내용이 있어요. 그런 건 지우고 다시 써 볼까요? (이름도 쓰지 않아요)';
@@ -1269,7 +1256,6 @@ function friendlyError(e) {
     if (m === 'CLASS_QUOTA') return '오늘 우리 반이 AI를 많이 썼어요. 조금 뒤에 다시 해 봐요.';
     if (m === 'TOO_LONG') return '글이 너무 길어요. 조금 줄여서 써 볼까요?';
     if (m === 'SERVER_NO_KEY') return 'AI 연결 설정이 아직 안 되어 있어요. 관리자에게 알려 주세요.';
-    if (m === 'BAD_KEY') return 'API 키나 모델 이름이 맞지 않아요. 관리자 페이지에서 확인해 주세요.';
     if (m === 'QUOTA') return '지금 AI가 너무 바빠요. 잠시 뒤에 다시 해 볼까요?';
     if (m === 'NETWORK') return '인터넷 연결을 확인해 주세요.';
     if (m === 'BLOCKED') return '이 내용은 AI가 답하기 어려워요. 다른 말로 바꿔 써 볼까요?';
@@ -1513,8 +1499,12 @@ const sitMatch = (s, q) => !normQ(q) || normQ(listTitle(s)).includes(normQ(q));
 function sitOptions(q) {
     const sf = situations.filter(s => sitMatch(s, q)), cf = customSits.filter(s => sitMatch(s, q));
     if (normQ(q) && !sf.length && !cf.length) return '<option value="" disabled>검색 결과가 없어요</option>';
-    return (sf.length ? `<optgroup label="기본 상황">` : '') + sf.map(s => `<option value="${s.id}">${s.emoji} ${esc(listTitle(s))}</option>`).join('') + (sf.length ? `</optgroup>` : '') +
-        (cf.length ? `<optgroup label="우리 반 상황">` + cf.map(s => `<option value="${s.id}">${esc(s.emoji)} ${esc(listTitle(s))}</option>`).join('') + `</optgroup>` : '');
+    const opt = s => `<option value="${s.id}">${esc(s.emoji)} ${esc(listTitle(s))}</option>`;
+    let h = '';
+    SIT_CATS.forEach(([name, ids]) => { const l = ids.map(id => sf.find(s => s.id === id)).filter(Boolean); if (l.length) h += `<optgroup label="${name}">${l.map(opt).join('')}</optgroup>`; });
+    const rest = sf.filter(s => catOf(s) === '기타'); if (rest.length) h += `<optgroup label="기타">${rest.map(opt).join('')}</optgroup>`;
+    if (cf.length) h += `<optgroup label="👥 우리 반 상황">${cf.map(opt).join('')}</optgroup>`;
+    return h;
 }
 function fillSitSelects() {
     const p1 = prSel.value, p2 = agSel.value;
@@ -1683,7 +1673,7 @@ async function aiFeedback() {
     const cc = curChars();
     const msg = `[상황] ${sitTitle(s)}\n[말하는 친구] ${cc.a.name}  [대답하는 친구] ${cc.b.name}\n[학생이 쓴 것]\n행동·상황: ${v.a || '-'}\n감정: ${v.e || '-'}\n바람: ${v.w || '-'}\n인정: ${v.ack || '-'}\n사과: ${v.sorry || '-'}\n약속: ${v.prom || '-'}\n\n[자동 점검 결과]\n${found}`;
     try {
-        const out = await callGemini({ system: sys, history: [{ role: 'user', text: msg }] });
+        const out = await callGemini({ system: sys, history: [{ role: 'user', text: msg }], kind: 'fb' });
         box.innerHTML = `<h3>AI 선생님 피드백</h3><div class="preview" style="min-height:0">${fmt(out)}</div>`;
     } catch (e) { box.innerHTML = `<div class="fb warn">${esc(friendlyError(e))}</div>`; }
 }
@@ -1754,8 +1744,12 @@ $('#mk-new').onclick = () => { mkClear(); $('#mk-msg').textContent = ''; };
 const printSel = new Set();
 function renderPrintList() {
     const box = $('#pt-list'); if (!box) return;
-    box.innerHTML = allSits().filter(s => sitMatch(s, sitQ.pt)).map(s => `<label class="pt-item ${printSel.has(String(s.id)) ? 'on' : ''}"><input type="checkbox" value="${esc(s.id)}" ${printSel.has(String(s.id)) ? 'checked' : ''}>
-        <span style="font-size:1.3rem">${esc(s.emoji)}</span><span>${esc(listTitle(s))}</span></label>`).join('');
+    const itemHtml = s => `<label class="pt-item ${printSel.has(String(s.id)) ? 'on' : ''}"><input type="checkbox" value="${esc(s.id)}" ${printSel.has(String(s.id)) ? 'checked' : ''}>
+        <span style="font-size:1.3rem">${esc(s.emoji)}</span><span>${esc(listTitle(s))}</span></label>`;
+    const list = allSits().filter(s => sitMatch(s, sitQ.pt)), groups = {};
+    list.forEach(s => { const c = typeof s.id === 'number' ? catOf(s) : '👥 우리 반 상황'; (groups[c] = groups[c] || []).push(s); });
+    box.innerHTML = [...SIT_CATS.map(c => c[0]), '기타', '👥 우리 반 상황'].filter(c => groups[c]).map(c =>
+        `<div class="pt-cat" style="flex:0 0 100%;width:100%;grid-column:1/-1;font-weight:800;margin:10px 0 2px;color:var(--muted,#667)">${c}</div>` + groups[c].map(itemHtml).join('')).join('');
     $$('input', box).forEach(i => i.onchange = () => { if (i.checked) printSel.add(i.value); else printSel.delete(i.value); i.parentElement.classList.toggle('on', i.checked); updatePtCount(); });
     updatePtCount();
 }
@@ -2000,9 +1994,9 @@ $('#hp-go').onclick = async () => {
     const btn = $('#hp-go'), st = $('#hp-status');
     btn.disabled = true; st.textContent = '생각하는 중…';
     try {
-        if (!getApiKey()) { renderHelp(localRecommend(text)); st.textContent = '예시 기반 추천 (AI 미연결)'; }
+        if (!proxyUrl() || !getClassCode()) { renderHelp(localRecommend(text)); st.textContent = '예시 기반 추천 (AI 미연결)'; }
         else {
-            const out = await callGemini({ system: buildSystem('helper'), history: [{ role: 'user', text: `[상황]\n${text}` + (legend ? `\n\n(알파벳은 캐릭터 이름으로 바뀐 거예요: ${legend})` : '') }], json: true });
+            const out = await callGemini({ system: buildSystem('helper'), history: [{ role: 'user', text: `[상황]\n${text}` + (legend ? `\n\n(알파벳은 캐릭터 이름으로 바뀐 거예요: ${legend})` : '') }], json: true, kind: 'helper' });
             const r = parseJsonLoose(out);
             if (!r || !(r.situation || (Array.isArray(r.pairs) && r.pairs.length))) throw new Error('EMPTY');
             renderHelp(r); st.textContent = 'AI 추천';
@@ -2066,11 +2060,11 @@ async function sendChat(text) {
     agBusy = true; $('#chat-send').disabled = true;
     try {
         const hist = [{ role: 'user', text: '(대화 시작)' }];
-        chat[role].filter(m => !m.typing && m.role !== 'sys').slice(-20).forEach(m => hist.push({ role: m.role === 'ai' ? 'ai' : 'user', text: m.text + (m.hint ? '\n' + m.hint : '') }));
+        chat[role].filter(m => !m.typing && m.role !== 'sys').slice(-12).forEach(m => hist.push({ role: m.role === 'ai' ? 'ai' : 'user', text: m.text + (m.hint ? '\n' + m.hint : '') }));
         // Gemini는 user/model이 번갈아 와야 해서 연속된 같은 role은 합친다
         const merged = [];
         hist.forEach(m => { const l = merged[merged.length - 1]; if (l && l.role === m.role) l.text += '\n' + m.text; else merged.push({ ...m }); });
-        const out = await callGemini({ system: buildSystem(role), history: merged });
+        const out = await callGemini({ system: buildSystem(role), history: merged, kind: role === 'teacher' ? 'teacher' : 'student' });
         chat[role].splice(chat[role].indexOf(typing), 1, { role: 'ai', text: out });
     } catch (e) {
         chat[role].splice(chat[role].indexOf(typing), 1, { role: 'sys', text: friendlyError(e) });
@@ -2145,17 +2139,15 @@ function renderAdmin() {
 const GUIDE_KEYS = Object.keys(DEFAULT_GUIDE);
 function fillAdminForm() {
     GUIDE_KEYS.forEach(k => { const el = $('#g-' + k); if (el && document.activeElement !== el) el.value = state.guide[k]; });
-    $('#ad-key').value = getApiKey();
-    $('#ad-model').value = state.model;
+    const wn = $('#ad-outdated'); if (wn) wn.style.display = state.guideOutdated ? 'block' : 'none';
     $('#ad-proxy').value = state.proxyUrl || '';
     $('#ad-temp').value = state.temperature; $('#ad-temp-v').textContent = state.temperature;
 }
 function readAdminForm() {
     const g = {}; GUIDE_KEYS.forEach(k => { g[k] = $('#g-' + k).value; });
-    return { ...g, model: $('#ad-model').value.trim() || 'gemini-3.8-flash', temperature: parseFloat($('#ad-temp').value), proxyUrl: $('#ad-proxy').value.trim() };
+    return { ...g, temperature: parseFloat($('#ad-temp').value), proxyUrl: $('#ad-proxy').value.trim() };
 }
 $('#ad-temp').oninput = () => $('#ad-temp-v').textContent = $('#ad-temp').value;
-$('#ad-key-eye').onclick = () => { const k = $('#ad-key'); k.type = k.type === 'password' ? 'text' : 'password'; $('#ad-key-eye').textContent = k.type === 'password' ? '보기' : '숨기기'; };
 $('#ad-logout').onclick = async () => { if (state.fb) { try { await state.fb.A.signOut(state.fb.auth); } catch (e) {} } localAdmin = false; state.adminUser = null; renderAdmin(); };
 $$('[data-reset]').forEach(b => b.onclick = () => { b.dataset.reset.split(',').forEach(k => { $('#g-' + k).value = DEFAULT_GUIDE[k]; }); toast('기본값을 불러왔어요. 저장을 눌러야 적용돼요.'); });
 
@@ -2164,9 +2156,9 @@ $('#ad-save').onclick = async () => {
     const data = readAdminForm(), msg = $('#ad-save-msg');
     // 비어 있는 칸은 기본값 유지
     GUIDE_KEYS.forEach(k => { if (!data[k].trim()) data[k] = DEFAULT_GUIDE[k]; });
-    applyGuide(data); state.model = data.model; state.temperature = data.temperature;
-    store.set('iMsg.guide', JSON.stringify(data)); store.set('iMsg.model', state.model); store.set('iMsg.temp', String(state.temperature));
-    const key = $('#ad-key').value.trim(); if (key) store.set(KEY_STORE, key); else store.del(KEY_STORE);
+    data.guideVer = GUIDE_VER; delete data.model;
+    applyGuide(data); state.guideOutdated = false; state.temperature = data.temperature;
+    store.set('iMsg.guide', JSON.stringify(data)); store.set('iMsg.temp', String(state.temperature));
     let where = '이 기기';
     if (state.fb && state.adminUser) {
         try { const { F, db } = state.fb; await F.setDoc(F.doc(db, ...GUIDE_DOC), { ...data, updatedAt: F.serverTimestamp(), updatedBy: state.adminUser }, { merge: true }); where = 'Firebase + 이 기기'; }
@@ -2177,34 +2169,34 @@ $('#ad-save').onclick = async () => {
     msg.textContent = `${where}에 저장했어요. (${new Date().toLocaleTimeString('ko-KR')})`;
     toast('저장했어요');
 };
-$('#ad-export').onclick = () => {
-    const blob = new Blob([JSON.stringify(readAdminForm(), null, 2)], { type: 'application/json' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'imsg-agent-guide.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-};
-$('#ad-import').onclick = () => $('#ad-file').click();
-$('#ad-file').onchange = async e => {
-    const f = e.target.files[0]; if (!f) return;
-    try { const o = JSON.parse(await f.text()); applyGuide(o); fillAdminForm(); if (o.model) $('#ad-model').value = o.model; toast('불러왔어요. 저장을 눌러야 적용돼요.'); }
-    catch (err) { toast('파일을 읽을 수 없어요'); }
-    e.target.value = '';
+$('#ad-ping').onclick = async () => {
+    const o = $('#ad-ping-out'); if (!proxyUrl()) { o.textContent = '서버 주소(PROXY_URL_CONST)가 비어 있어요.'; return; }
+    o.textContent = '확인 중…';
+    try {
+        const p = await proxyPost({ action: 'ping' });
+        if (!p.ok) { o.textContent = '서버가 옛 버전이에요(ping 없음). Code.gs를 붙여 넣고 [배포 관리 > 연필 > 새 버전]으로 다시 배포하세요.'; return; }
+        let t = `서버 ${p.version} · 키 ${p.hasKey ? '있음' : '없음!'}${p.model ? ' · MODEL 속성=' + p.model + ' (비워 두는 걸 권장)' : ''}`;
+        if (amKey()) { const t0 = Date.now(); try { const r = await callGemini({ system: '한 줄로 짧게 답해.', history: [{ role: 'user', text: '안녕이라고만 말해.' }], kind: 'student', admin: true }); t += ` · AI 응답 OK (${((Date.now() - t0) / 1000).toFixed(1)}초)`; } catch (e) { t += ' · AI 실패: ' + friendlyError(e); } }
+        else t += ' · (관리자 키를 아래 [전체 학급 관리]에 넣고 다시 누르면 AI 호출까지 점검해요)';
+        o.textContent = t;
+    } catch (e) { o.textContent = friendlyError(e); }
 };
 $('#ad-test-go').onclick = async () => {
     const out = $('#ad-test-out'), role = $('#ad-test-role').value, text = $('#ad-test-in').value.trim();
     if (!text) { toast('테스트할 말을 입력해 주세요'); return; }
     // 저장 전 폼 내용으로 임시 테스트
-    const keep = { guide: { ...state.guide }, model: state.model, t: state.temperature, p: state.proxyUrl };
-    const f = readAdminForm(); applyGuide(f); state.model = f.model; state.temperature = f.temperature;
-    const prevKey = getApiKey(), typed = $('#ad-key').value.trim(); if (typed && typed !== prevKey) store.set(KEY_STORE, typed);
+    const keep = { guide: { ...state.guide }, t: state.temperature, p: state.proxyUrl, o: state.guideOutdated };
+    const f = readAdminForm(); f.guideVer = GUIDE_VER; applyGuide(f); state.temperature = f.temperature;
     out.textContent = '생각하는 중…';
     try {
         if (role === 'helper') {
-            const r = parseJsonLoose(await callGemini({ system: buildSystem('helper'), history: [{ role: 'user', text: `[상황]\n${text}` }], json: true }));
+            const r = parseJsonLoose(await callGemini({ system: buildSystem('helper'), history: [{ role: 'user', text: `[상황]\n${text}` }], json: true, kind: 'test', admin: true }));
             out.textContent = r ? JSON.stringify(r, null, 2) : '(JSON을 읽지 못했어요)';
         } else {
-            out.textContent = await callGemini({ system: buildSystem(role), history: [{ role: 'user', text: '(대화 시작)' }, { role: 'ai', text: firstMsg(role) }, { role: 'user', text }] });
+            out.textContent = await callGemini({ system: buildSystem(role), history: [{ role: 'user', text: '(대화 시작)' }, { role: 'ai', text: firstMsg(role) }, { role: 'user', text }], kind: 'test', admin: true });
         }
     } catch (e) { out.textContent = friendlyError(e); }
-    state.guide = keep.guide; state.model = keep.model; state.temperature = keep.t; state.proxyUrl = keep.p;
+    state.guide = keep.guide; state.temperature = keep.t; state.proxyUrl = keep.p; state.guideOutdated = keep.o;
 };
 
 /* =====================================================================
